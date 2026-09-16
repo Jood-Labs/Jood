@@ -1,8 +1,7 @@
-from pydantic import BaseModel
-from models.preference import UserPreferences
+from pydantic import BaseModel, Field
 
 
 class RecipeGenerationRequest(BaseModel):
     ingredients: list[str]
-    preferences: UserPreferences
-    number_of_people: int
+    servings: int = Field(gt=0)
+    max_time_minutes: int | None = Field(default=None, gt=0)

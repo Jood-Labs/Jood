@@ -1,33 +1,26 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
-from models.preference import UserPreferences
 from services.supabase_client import supabase_admin
 from dependencies.auth import get_current_user
-
+from models.user import UserProfileUpdate
 
 router = APIRouter(
-    prefix="/preferences",
-    tags=["Preferences"]
+    prefix="/profile",
+    tags=["Profile"]
 )
 
 
-@router.put("/")
-def save_preferences(
-    preferences: UserPreferences,
+@router.get("/")
+def get_profile(
     current_user=Depends(get_current_user)
 ):
     try:
-        profile_data = {
-            "diet": preferences.diet,
-            "preferred_cuisines": preferences.preferred_cuisines,
-            "allergies": preferences.allergies,
-            "dislikes": preferences.dislikes
-        }
-
         response = (
             supabase_admin
             .table("profiles")
-            .update(profile_data)
+            .select(
+                "id, created_at, name, diet, preferred_cuisines, allergies, dislikes"
+            )
             .eq("id", str(current_user.id))
             .execute()
         )
@@ -38,9 +31,13 @@ def save_preferences(
                 detail="Profile not found"
             )
 
+        profile = response.data[0]
+
         return {
-            "message": "Preferences saved successfully",
-            "profile": response.data[0]
+            "profile": {
+                **profile,
+                "email": current_user.email
+            }
         }
 
     except HTTPException:
@@ -51,17 +48,19 @@ def save_preferences(
             status_code=400,
             detail=str(e)
         )
-@router.get("/")
-def get_preferences(
+
+@router.put("/")
+def update_profile(
+    profile_update: UserProfileUpdate,
     current_user=Depends(get_current_user)
 ):
     try:
         response = (
             supabase_admin
             .table("profiles")
-            .select(
-                "diet, preferred_cuisines, allergies, dislikes"
-            )
+            .update({
+                "name": profile_update.name
+            })
             .eq("id", str(current_user.id))
             .execute()
         )
@@ -73,7 +72,8 @@ def get_preferences(
             )
 
         return {
-            "preferences": response.data[0]
+            "message": "Profile updated successfully",
+            "profile": response.data[0]
         }
 
     except HTTPException:
