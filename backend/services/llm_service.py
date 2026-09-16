@@ -1,7 +1,11 @@
-async def generate_recipes(ingredients, preferences, number_of_people):
-    # Mock recipes for now.
-    # Later, this will be replaced with the real LLM integration.
-
+# Mock recipes for now.
+# Later, this will be replaced with the real LLM integration.
+async def generate_recipes(
+    ingredients,
+    preferences,
+    servings,
+    max_time_minutes
+):
     return [
         {
             "name": "Cheese Omelette",
