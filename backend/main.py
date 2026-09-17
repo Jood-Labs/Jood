@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from routes import ingredients, preferences, recipes, auth, bookmarks, profile, shopping_list
 

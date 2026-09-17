@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from models.recipe import RecipeGenerationRequest
+from models.recipe import (
+    RecipeGenerationRequest,
+    RecipeGenerationResponse,
+)
 from services.llm_service import generate_recipes
 from services.supabase_client import supabase_admin
 from services.recipe_matching import analyze_recipe_match
@@ -9,48 +12,68 @@ from dependencies.auth import get_current_user
 
 router = APIRouter(
     prefix="/recipes",
-    tags=["Recipes"]
+    tags=["Recipes"],
 )
 
 
-@router.post("/generate")
+@router.post(
+    "/generate",
+    response_model=RecipeGenerationResponse,
+)
 async def generate_recipe_suggestions(
     request: RecipeGenerationRequest,
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
 ):
     try:
-        # 1. Get the logged-in user's saved preferences
         response = (
             supabase_admin
             .table("profiles")
             .select(
                 "diet, preferred_cuisines, allergies, dislikes"
             )
-            .eq("id", str(current_user.id))
+            .eq(
+                "id",
+                str(current_user.id),
+            )
             .execute()
         )
 
         if not response.data:
             raise HTTPException(
                 status_code=404,
-                detail="Profile not found"
+                detail="Profile not found",
             )
 
-        preferences = response.data[0]
+        profile = response.data[0]
 
-        # 2. Generate recipes
+        preferences = {
+            "diet": profile.get("diet") or "regular",
+            "preferred_cuisines": (
+                profile.get("preferred_cuisines")
+                or []
+            ),
+            "allergies": (
+                profile.get("allergies")
+                or []
+            ),
+            "dislikes": (
+                profile.get("dislikes")
+                or []
+            ),
+        }
+
         generated_recipes = await generate_recipes(
             ingredients=request.ingredients,
+            priority_ingredients=request.priority_ingredients,
             preferences=preferences,
             servings=request.servings,
-            max_time_minutes=request.max_time_minutes
+            max_time_minutes=request.max_time_minutes,
         )
 
-        # 3. Analyze each recipe against the user's available ingredients
         for recipe in generated_recipes:
             match = analyze_recipe_match(
                 available_ingredients=request.ingredients,
-                recipe_ingredients=recipe["ingredients"]
+                recipe_ingredients=recipe["ingredients"],
             )
 
             recipe["you_have"] = match["you_have"]
@@ -61,20 +84,19 @@ async def generate_recipe_suggestions(
                 "ingredient_utilization"
             ]
 
-        # 4. Save the generated recipes in Supabase
         recipes_to_save = []
 
         for recipe in generated_recipes:
             recipes_to_save.append({
-           "user_id": str(current_user.id),
-           "name": recipe["name"],
-           "servings": request.servings,
-           "time_minutes": recipe["time_minutes"],
-           "ingredients": recipe["ingredients"],
-           "instructions": recipe["instructions"],
-           "you_have": recipe["you_have"],
-           "you_need": recipe["you_need"]
-})
+                "user_id": str(current_user.id),
+                "name": recipe["name"],
+                "servings": request.servings,
+                "time_minutes": recipe["time_minutes"],
+                "ingredients": recipe["ingredients"],
+                "instructions": recipe["instructions"],
+                "you_have": recipe["you_have"],
+                "you_need": recipe["you_need"],
+            })
 
         saved_response = (
             supabase_admin
@@ -83,12 +105,11 @@ async def generate_recipe_suggestions(
             .execute()
         )
 
-        # 5. Combine saved recipe data with matching results
         final_recipes = []
 
         for saved_recipe, generated_recipe in zip(
             saved_response.data,
-            generated_recipes
+            generated_recipes,
         ):
             final_recipes.append({
                 **saved_recipe,
@@ -98,22 +119,23 @@ async def generate_recipe_suggestions(
                 "missing_count": generated_recipe["missing_count"],
                 "ingredient_utilization": generated_recipe[
                     "ingredient_utilization"
-                ]
+                ],
+                "priority_used_count": generated_recipe[
+                    "priority_used_count"
+                ],
             })
 
-        # 6. Rank recipes by ingredient utilization and missing ingredients
-            final_recipes.sort(
+        final_recipes.sort(
             key=lambda recipe: (
-            -recipe["ingredient_utilization"],
-            recipe["missing_count"]
+                -recipe["priority_used_count"],
+                -recipe["ingredient_utilization"],
+                recipe["missing_count"],
+            )
         )
-    )
 
-        # 7. Mark the first recipe as the best match
         for index, recipe in enumerate(final_recipes):
-         recipe["is_best_match"] = index == 0
+            recipe["is_best_match"] = index == 0
 
-        # 8. Return final recipes
         return {
             "recipes": final_recipes
         }
@@ -121,8 +143,20 @@ async def generate_recipe_suggestions(
     except HTTPException:
         raise
 
-    except Exception as e:
+    except ValueError as error:
         raise HTTPException(
             status_code=400,
-            detail=str(e)
-        )
+            detail=str(error),
+        ) from error
+
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=502,
+            detail=str(error),
+        ) from error
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error",
+        ) from error
