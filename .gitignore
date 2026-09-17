@@ -13,3 +13,7 @@ frontend/dist/
 
 # VS Code
 .vscode/
+
+# local LLM test files
+backend/test_llm_api.py
+backend/test_cases.py
