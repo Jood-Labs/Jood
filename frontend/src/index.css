@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("./assets/fonts/thmanyahsans-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("./assets/fonts/thmanyahsans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("./assets/fonts/thmanyahsans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("./assets/fonts/thmanyahsans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("./assets/fonts/thmanyahsans-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Thmanyah Sans", Tahoma, Arial, sans-serif;
+
+  --color-jood-green: #31572c;
+  --color-jood-lime: #edf49a;
+  --color-jood-background: #faf9f6;
+  --color-jood-secondary: #006837;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background-color: var(--color-jood-background);
+  color: var(--color-jood-green);
+  font-family: var(--font-sans);
+}
+
+.stylistic-text {
+  font-feature-settings: "ss01" 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jood-timeline.timeline-ready .timeline-step {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 650ms ease,
+      transform 650ms ease;
+    transition-delay: var(--step-delay, 0ms);
+  }
+
+  .jood-timeline.timeline-ready.timeline-visible .timeline-step {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .feature-item.reveal-ready {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 600ms ease,
+      transform 600ms ease;
+  }
+
+  .feature-item.reveal-ready.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .feature-item.reveal-ready.is-visible {
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .try-jood.reveal-ready .try-jood-content {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 700ms ease,
+      transform 700ms ease;
+  }
+
+  .try-jood.reveal-ready.is-visible .try-jood-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ingredient-date {
+  text-align: right;
+  color: var(--color-jood-green);
+  -webkit-text-fill-color: var(--color-jood-green);
+}
+
+.ingredient-date::-webkit-date-and-time-value {
+  text-align: right;
+}
+
+.ingredient-date::-webkit-datetime-edit {
+  display: inline-flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+
+input.ingredient-date,
+input.ingredient-date::-webkit-datetime-edit,
+input.ingredient-date::-webkit-datetime-edit-fields-wrapper,
+input.ingredient-date::-webkit-datetime-edit-text,
+input.ingredient-date::-webkit-datetime-edit-day-field,
+input.ingredient-date::-webkit-datetime-edit-month-field,
+input.ingredient-date::-webkit-datetime-edit-year-field {
+  color: rgb(49 87 44 / 40%) !important;
+  -webkit-text-fill-color: rgb(49 87 44 / 40%) !important;
+  opacity: 1 !important;
+}
+
+input.ingredient-date {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-inline-size: 0;
+  height: 48px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input.ingredient-date::-webkit-date-and-time-value {
+  min-height: 1.5em;
+  text-align: right;
+}
+
+input.ingredient-date::-webkit-datetime-edit {
+  min-width: 0;
+  padding: 0;
+}
+
+input.ingredient-date {
+  --date-text-color: rgb(49 87 44 / 40%);
+}
+
+input.ingredient-date[data-filled="true"] {
+  --date-text-color: #31572c;
+}
+
+input.ingredient-date,
+input.ingredient-date::-webkit-datetime-edit,
+input.ingredient-date::-webkit-datetime-edit-fields-wrapper,
+input.ingredient-date::-webkit-datetime-edit-text,
+input.ingredient-date::-webkit-datetime-edit-day-field,
+input.ingredient-date::-webkit-datetime-edit-month-field,
+input.ingredient-date::-webkit-datetime-edit-year-field {
+  color: var(--date-text-color) !important;
+  -webkit-text-fill-color: var(--date-text-color) !important;
+  opacity: 1 !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition {
+    animation: jood-page-fade 240ms ease-out both;
+    will-change: opacity;
+  }
+
+  @keyframes jood-page-fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  button:not(:disabled):active,
+  a[href]:active,
+  [role="button"]:active {
+    scale: 0.98;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
+
+.jood-fixed-watermark {
+  background-image: url('./assets/images/jood-watermark.svg');
+  background-repeat: no-repeat;
+  background-size: 550px auto;
+  background-position: left -4rem bottom -3rem;
+  background-attachment: fixed;
+}
+
+@media (min-width: 1024px) {
+  .jood-fixed-watermark {
+    background-size: 900px auto;
+    background-position: left -6rem bottom -5rem;
+  }
+}
+
+.jood-fixed-watermark {
+  background-blend-mode: normal;
+}
