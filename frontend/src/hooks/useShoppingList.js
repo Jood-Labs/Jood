@@ -2,11 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 
 import {
     addRecipeMissingIngredients,
-    clearShoppingList,
-    deleteShoppingListItem,
+    addSingleRecipeIngredient,
     getShoppingList,
-    updateShoppingListItem,
 } from '../services/shoppingListApi'
+
 
 export default function useShoppingList() {
     const [items, setItems] = useState([])
@@ -21,16 +20,11 @@ export default function useShoppingList() {
                 ? data
                 : data.items || []
 
-            setItems(
-                list.map((item) => ({
-                    ...item,
-                    checked: !item.is_selected,
-                }))
-            )
+            setItems(list)
         } catch (error) {
             setMessage(
                 error.message ||
-                'تعذّر تحميل قائمة التسوق'
+                'تعذّر تحميل بيانات السلة'
             )
         } finally {
             setLoading(false)
@@ -42,18 +36,18 @@ export default function useShoppingList() {
     }, [loadShoppingList])
 
     function contains(ingredientKey) {
-    if (!ingredientKey) return false
+        if (!ingredientKey) return false
 
-    return items.some(
-        (item) =>
-            item.ingredient_key
-                ?.toLowerCase()
-                .trim() ===
-            ingredientKey
-                .toLowerCase()
-                .trim()
-    )
-}
+        const normalizedKey =
+            ingredientKey.toLowerCase().trim()
+
+        return items.some(
+            (item) =>
+                item.ingredient_key
+                    ?.toLowerCase()
+                    .trim() === normalizedKey
+        )
+    }
 
     async function addIngredients(recipe) {
         try {
@@ -62,119 +56,45 @@ export default function useShoppingList() {
             await loadShoppingList()
 
             setMessage(
-                'تمت إضافة المكونات الناقصة لقائمة التسوق'
+                'تمت إضافة المكونات الناقصة للسلة'
             )
+
+            return true
         } catch (error) {
             setMessage(
                 error.message ||
                 'تعذّر إضافة المكونات'
             )
+
+            return false
         }
     }
 
-    async function updateCartQuantity(id, cartQuantity) {
-    if (cartQuantity < 1) return
-
+    async function addSingleIngredient(recipeId, ingredientKey) {
     try {
-        await updateShoppingListItem(id, {
-            cart_quantity: cartQuantity,
-        })
+        await addSingleRecipeIngredient(
+            recipeId,
+            ingredientKey
+        )
 
         await loadShoppingList()
+
+        setMessage('تمت إضافة المكوّن للسلة')
+        return true
     } catch (error) {
         setMessage(
-            error.message ||
-            'تعذّر تحديث عدد المنتجات'
+            error.message || 'تعذّر إضافة المكوّن'
         )
+        return false
     }
 }
 
-    async function toggleChecked(id) {
-        const item = items.find(
-            (currentItem) => currentItem.id === id
-        )
-
-        if (!item) return
-
-        try {
-            await updateShoppingListItem(id, {
-                is_selected: item.checked,
-            })
-
-            await loadShoppingList()
-        } catch (error) {
-            setMessage(
-                error.message ||
-                'تعذّر تحديث المكوّن'
-            )
-        }
-    }
-
-    async function removeItem(id) {
-        try {
-            await deleteShoppingListItem(id)
-
-            await loadShoppingList()
-
-            setMessage('تم حذف المكوّن')
-        } catch (error) {
-            setMessage(
-                error.message ||
-                'تعذّر حذف المكوّن'
-            )
-        }
-    }
-
-    async function clearChecked() {
-        const checkedItems = items.filter(
-            (item) => item.checked
-        )
-
-        try {
-            await Promise.all(
-                checkedItems.map((item) =>
-                    deleteShoppingListItem(item.id)
-                )
-            )
-
-            await loadShoppingList()
-
-            setMessage(
-                'تم حذف المكونات اللي توفّرت'
-            )
-        } catch (error) {
-            setMessage(
-                error.message ||
-                'تعذّر حذف المكونات'
-            )
-        }
-    }
-
-    async function clearAll() {
-        try {
-            await clearShoppingList()
-
-            await loadShoppingList()
-
-            setMessage('تم مسح قائمة التسوق')
-        } catch (error) {
-            setMessage(
-                error.message ||
-                'تعذّر مسح قائمة التسوق'
-            )
-        }
-    }
-
     return {
-        items,
-        message,
-        loading,
-        contains,
-        addIngredients,
-        updateCartQuantity,
-        toggleChecked,
-        removeItem,
-        clearChecked,
-        clearAll,
-    }
+    items,
+    message,
+    loading,
+    contains,
+    addIngredients,
+    addSingleIngredient,
+}
 }

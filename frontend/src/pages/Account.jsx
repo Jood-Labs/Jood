@@ -11,7 +11,7 @@ import {
     Check,
     LockKeyhole,
     LogOut,
-    ShoppingBasket,
+    ShoppingCart,
     SlidersHorizontal,
     UserRound,
 } from 'lucide-react'
@@ -43,11 +43,11 @@ const shortcuts = [
         icon: Bookmark,
     },
     {
-        to: '/shopping-list',
-        title: 'قائمة التسوق',
-        description: 'المكونات اللي تحتاجها لطبختك الجاية',
-        icon: ShoppingBasket,
-    },
+    to: '/cart',
+    title: 'سلة المنتجات',
+    description: 'المنتجات المطابقة للمكونات الناقصة في وصفاتك',
+    icon: ShoppingCart,
+},
     {
         to: '/account/password',
         title: 'تغيير كلمة المرور',

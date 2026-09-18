@@ -1,8 +1,8 @@
 import { apiFetch } from './api'
 
 
-export async function createCartFromShoppingList() {
-    return apiFetch('/cart/from-shopping-list', {
-        method: 'POST',
+export async function getCart() {
+    return apiFetch('/shopping-list/cart', {
+        method: 'GET',
     })
 }

@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
     UserRound,
     ChevronDown,
@@ -9,7 +9,7 @@ import {
     ArrowRight,
     CalendarDays,
 } from 'lucide-react'
-
+import { detectIngredients } from '../services/ingredientApi'
 import IngredientUpload from '../components/home/IngredientUpload'
 import logo from '../assets/images/jood3.svg'
 
@@ -237,25 +237,16 @@ function IngredientExpiry({ ingredient, onChange }) {
 
 export default function Home({ userName = '' }) {
     const navigate = useNavigate()
-    const location = useLocation()
     const nameInputRef = useRef(null)
 
     const [ingredient, setIngredient] = useState('')
     const [draftExpiry, setDraftExpiry] = useState(emptyExpiry)
     const [error, setError] = useState('')
     const [announcement, setAnnouncement] = useState('')
+    const [isDetecting, setIsDetecting] = useState(false)
 
-    const [imageFile, setImageFile] = useState(
-        () => location.state?.imageFile ?? null
-    )
-
-    const [ingredients, setIngredients] = useState(() => {
-        const incoming = location.state?.ingredients
-
-        return Array.isArray(incoming)
-            ? incoming.map((item) => ({ ...item }))
-            : []
-    })
+    const [imageFile, setImageFile] = useState(null)
+const [ingredients, setIngredients] = useState([])
 
     const nextIdRef = useRef(
         Math.max(
@@ -310,10 +301,11 @@ export default function Home({ userName = '' }) {
         }
 
         const newIngredient = {
-            id: nextIdRef.current++,
-            name,
-            ...draftExpiry,
-        }
+    id: nextIdRef.current++,
+    name,
+    source: 'home-manual',
+    ...draftExpiry,
+}
 
         setIngredients((current) => [...current, newIngredient])
         setIngredient('')
@@ -348,33 +340,65 @@ export default function Home({ userName = '' }) {
         setError('')
     }
 
-    function handleContinue() {
-        // BACKEND: When an image is present, upload it to the ingredient-analysis endpoint and pass the detected ingredients to /ingredients/review; manually entered ingredients can be merged with that response.
-        if (!canContinue) {
-            setError('أضف صورة أو مكوّن للمتابعة')
-            nameInputRef.current?.focus()
-            return
+    async function handleContinue() {
+    if (!canContinue) {
+        setError('أضف صورة أو مكوّن للمتابعة')
+        nameInputRef.current?.focus()
+        return
+    }
+
+    if (ingredient.trim()) {
+        setError('اضغط إضافة المكوّن أو امسح اسمه قبل المتابعة')
+        nameInputRef.current?.focus()
+        return
+    }
+
+    if (draftExpiry.expiringSoon) {
+        setError('اكتب اسم المكوّن وأضفه أو ألغِ خيار قرب ينتهي')
+        nameInputRef.current?.focus()
+        return
+    }
+
+    setError('')
+    setIsDetecting(true)
+
+    try {
+        let detectedIngredients = []
+
+        if (imageFile) {
+            const response = await detectIngredients(imageFile)
+
+            detectedIngredients = (response.ingredients || []).map((item) => ({
+    id: nextIdRef.current++,
+    name: item.name,
+    confidence: item.confidence,
+    detectedByAI: true,
+    source: 'image',
+    ...emptyExpiry(),
+}))
         }
 
-        if (ingredient.trim()) {
-            setError('اضغط إضافة المكوّن أو امسح اسمه قبل المتابعة')
-            nameInputRef.current?.focus()
-            return
-        }
-
-        if (draftExpiry.expiringSoon) {
-            setError('اكتب اسم المكوّن وأضفه أو ألغِ خيار قرب ينتهي')
-            nameInputRef.current?.focus()
-            return
-        }
+        const allIngredients = [
+            ...ingredients.map((item) => ({ ...item })),
+            ...detectedIngredients,
+        ]
 
         navigate('/ingredients/review', {
             state: {
-                ingredients: ingredients.map((item) => ({ ...item })),
+                ingredients: allIngredients,
                 imageFile,
             },
         })
+    } catch (err) {
+        setError(
+            err instanceof Error
+                ? err.message
+                : 'تعذّر تحليل الصورة. حاول مرة ثانية.'
+        )
+    } finally {
+        setIsDetecting(false)
     }
+}
 
     return (
         <div
@@ -600,16 +624,42 @@ export default function Home({ userName = '' }) {
                         </section>
                     )}
 
+                    {isDetecting && (
+    <div
+        role="status"
+        className="mt-6 flex flex-col items-center justify-center rounded-3xl bg-white p-6 text-center"
+    >
+        <span
+            aria-hidden="true"
+            className="block size-8 animate-spin rounded-full border-2 border-jood-green/20 border-t-jood-green"
+        />
+
+        <p className="mt-4 font-medium text-jood-green">
+            جاري تحليل الصورة...
+        </p>
+
+        <p className="mt-2 text-sm text-jood-green/60">
+            قاعدين نتعرّف على المكونات الموجودة
+        </p>
+    </div>
+)}
+
                     {canContinue && (
                         <div className="mt-6 flex justify-start">
                             <button
-                                type="button"
-                                onClick={handleContinue}
-                                className="jood-button inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:px-10"
-                            >
-                                <ArrowRight size={20} aria-hidden="true" />
-                                التالي
-                            </button>
+    type="button"
+    onClick={handleContinue}
+    disabled={isDetecting}
+    className="jood-button inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none sm:px-10"
+>
+    <ArrowRight size={20} aria-hidden="true" />
+
+    {isDetecting
+        ? 'جاري تحليل الصورة...'
+        : imageFile
+          ? 'تحليل الصورة'
+          : 'التالي'}
+</button>
                         </div>
                     )}
                 </div>

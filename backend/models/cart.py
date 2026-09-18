@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class CartProduct(BaseModel):
+    shopping_list_item_id: UUID
     product_id: UUID
     name: str
     ingredient_key: str
@@ -14,6 +16,7 @@ class CartProduct(BaseModel):
 
 
 class UnmatchedIngredient(BaseModel):
+    shopping_list_item_id: UUID
     name: str
     ingredient_key: str
     cart_quantity: int

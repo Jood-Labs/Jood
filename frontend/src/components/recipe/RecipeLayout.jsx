@@ -3,7 +3,7 @@ import {
     UserRound,
     ChevronDown,
     SlidersHorizontal,
-    ShoppingBasket,
+    ShoppingCart,
     LogOut,
 } from 'lucide-react'
 
@@ -67,16 +67,16 @@ export default function RecipeLayout({
                             </Link>
 
                             <Link
-                                to="/shopping-list"
-                                state={navigationState}
-                                className="flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-jood-background"
-                            >
-                                <ShoppingBasket
-                                    size={18}
-                                    aria-hidden="true"
-                                />
-                                قائمة التسوق
-                            </Link>
+    to="/cart"
+    state={navigationState}
+    className="flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-jood-background"
+>
+    <ShoppingCart
+        size={18}
+        aria-hidden="true"
+    />
+    سلة المنتجات
+</Link>
 
                             <div className="my-1 border-t border-jood-green/10" />
 
