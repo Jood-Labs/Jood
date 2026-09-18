@@ -248,7 +248,7 @@ async function handleSubmit(event) {
                                 <button
                                     type="button"
                                     onClick={() => changeStep(step - 1)}
-                                    className="min-h-12 rounded-full border border-jood-green/20 bg-white px-6 py-3 font-medium text-jood-green hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
+                                    className="jood-button min-h-12 rounded-full border border-jood-green/20 bg-white px-6 py-3 font-medium text-jood-green hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
                                 >
                                     السابق
                                 </button>
@@ -257,7 +257,7 @@ async function handleSubmit(event) {
                             <button
     type="submit"
     disabled={saving}
-    className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
+    className="jood-button flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
 >
     {saving
         ? 'جاري الحفظ...'

@@ -45,7 +45,7 @@ export default function Login() {
                 <Link
                     to="/"
                     aria-label="الرجوع للرئيسية"
-                    className="group ms-auto inline-flex min-h-12 w-fit items-center rounded-full border border-jood-green/15 bg-white px-3 text-jood-green shadow-sm transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                    className="jood-button group ms-auto inline-flex min-h-12 w-fit items-center rounded-full border border-jood-green/15 bg-white px-3 text-jood-green shadow-sm transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                 >
                     <ArrowLeft
                         size={22}
@@ -186,7 +186,7 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+                            className="jood-button mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
                            >              
                             {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                         </button>

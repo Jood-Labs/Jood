@@ -78,7 +78,7 @@ export default function SignUp() {
                 <Link
                     to="/"
                     aria-label="الرجوع للرئيسية"
-                    className="group ms-auto inline-flex min-h-12 w-fit items-center rounded-full border border-jood-green/15 bg-white px-3 text-jood-green shadow-sm transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                    className="jood-button group ms-auto inline-flex min-h-12 w-fit items-center rounded-full border border-jood-green/15 bg-white px-3 text-jood-green shadow-sm transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                 >
                     <ArrowLeft
                         size={22}
@@ -282,7 +282,7 @@ export default function SignUp() {
                             type="submit"
                             disabled={submitStatus !== 'idle'}
                             aria-busy={submitStatus === 'loading'}
-                            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                            className="jood-button mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-default focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                         >
                             {submitStatus === 'idle' && 'إنشاء الحساب'}
 

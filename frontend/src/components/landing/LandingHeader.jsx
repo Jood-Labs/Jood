@@ -25,14 +25,14 @@ export default function LandingHeader() {
                 >
                     <a
                         href="#how-it-works"
-                        className="rounded-full stylistic-text px-5 py-3 text-base font-medium text-jood-green transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                        className="jood-button rounded-full stylistic-text px-5 py-3 text-base font-medium text-jood-green transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                     >
                         كيف تبدأ؟
                     </a>
 
                     <a
                         href="#why-jood"
-                        className="rounded-full stylistic-text px-5 py-3 text-base font-medium text-jood-green transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                        className="jood-button rounded-full stylistic-text px-5 py-3 text-base font-medium text-jood-green transition-colors duration-200 hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                     >
                         مميزات جُود
                     </a>
@@ -40,7 +40,7 @@ export default function LandingHeader() {
 
                 <Link
                     to="/login"
-                    className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-jood-green px-5 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none lg:justify-self-end"
+                    className="jood-button inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-jood-green px-5 py-3 text-sm font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none lg:justify-self-end"
                 >
                     تسجيل الدخول
                 </Link>

@@ -189,10 +189,10 @@ input.ingredient-date::-webkit-datetime-edit-year-field {
   -webkit-text-fill-color: var(--date-text-color) !important;
   opacity: 1 !important;
 }
+
 @media (prefers-reduced-motion: no-preference) {
   .page-transition {
-    animation: jood-page-fade 240ms ease-out both;
-    will-change: opacity;
+    animation: jood-page-fade 180ms ease-out both;
   }
 
   @keyframes jood-page-fade {
@@ -203,12 +203,6 @@ input.ingredient-date::-webkit-datetime-edit-year-field {
     to {
       opacity: 1;
     }
-  }
-
-  button:not(:disabled):active,
-  a[href]:active,
-  [role="button"]:active {
-    scale: 0.98;
   }
 }
 
@@ -236,4 +230,63 @@ input.ingredient-date::-webkit-datetime-edit-year-field {
 
 .jood-fixed-watermark {
   background-blend-mode: normal;
+}
+
+.jood-button {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    translate 180ms ease;
+}
+
+.jood-recipe-card {
+  transition:
+    translate 220ms ease,
+    box-shadow 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .jood-button:not(:disabled):hover {
+    translate: 0 -2px;
+    box-shadow: 0 5px 14px rgb(49 87 44 / 12%);
+  }
+
+  .jood-recipe-card:hover {
+    translate: 0 -4px;
+    box-shadow: 0 12px 28px rgb(49 87 44 / 10%);
+  }
+}
+
+.jood-recipe-card:focus-within {
+  box-shadow: 0 8px 24px rgb(49 87 44 / 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .jood-button,
+  .jood-recipe-card {
+    transition: none;
+    translate: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .recipe-enter {
+    animation: recipe-pop 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes recipe-pop {
+    0% {
+      transform: scale(0.97);
+    }
+
+    70% {
+      transform: scale(1.015);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
 }

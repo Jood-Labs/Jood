@@ -100,7 +100,7 @@ export default function ForgotPasswordDialog({
         submitStatus === 'loading' || submitStatus === 'check'
 
     const buttonClassName =
-        'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-default disabled:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none'
+        'jood-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-default disabled:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none'
 
     return (
         <dialog

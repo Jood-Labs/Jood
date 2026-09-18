@@ -7,6 +7,7 @@ import {
     Plus,
     X,
     ArrowRight,
+    CalendarDays,
 } from 'lucide-react'
 
 import IngredientUpload from '../components/home/IngredientUpload'
@@ -42,38 +43,80 @@ function getLocalDate() {
 
 function IngredientExpiry({ ingredient, onChange }) {
     const id = useId()
+    const triggerRef = useRef(null)
 
-    const mode =
+    const [isOpen, setIsOpen] = useState(false)
+    const [mode, setMode] = useState('')
+    const [date, setDate] = useState('')
+    const [expiryError, setExpiryError] = useState('')
+
+    const savedMode =
         ingredient.expiryMode || (ingredient.expiryDate ? 'date' : '')
 
-    const enabled = ingredient.expiringSoon ?? Boolean(mode)
+    const hasExpiry =
+        ingredient.expiringSoon ?? Boolean(savedMode)
 
-    function toggleEnabled(event) {
-        onChange({
-            ...emptyExpiry(),
-            expiringSoon: event.target.checked,
-        })
+    function openEditor() {
+        setMode(hasExpiry ? savedMode : '')
+        setDate(hasExpiry ? ingredient.expiryDate || '' : '')
+        setExpiryError('')
+        setIsOpen(true)
     }
 
-    function selectMode(value) {
+    function closeEditor() {
+        setIsOpen(false)
+        triggerRef.current?.focus()
+    }
+
+    function saveExpiry() {
+        if (!mode) {
+            setExpiryError('اختَر المدة أو حدّد التاريخ')
+            return
+        }
+
+        if (mode === 'date' && !date) {
+            setExpiryError('حدّد تاريخ الانتهاء')
+            return
+        }
+
         onChange({
             expiringSoon: true,
-            expiryMode: value,
-            expiryDate: '',
+            expiryMode: mode,
+            expiryDate: mode === 'date' ? date : '',
             expiryEstimateRecordedOn:
-                value === 'date' ? '' : getLocalDate(),
+                mode === 'date' ? '' : getLocalDate(),
         })
+
+        closeEditor()
     }
 
+    function clearExpiry() {
+        onChange(emptyExpiry())
+        closeEditor()
+    }
+
+    const selectedLabel =
+        expiryOptions.find((option) => option.value === savedMode)?.label
+
     return (
-        <div className="mt-3 min-w-0">
+        <div className="relative mt-3">
             <label className="inline-flex min-h-11 cursor-pointer items-center gap-2">
                 <input
+                    ref={triggerRef}
                     type="checkbox"
-                    checked={enabled}
-                    onChange={toggleEnabled}
-                    aria-controls={`${id}-options`}
-                    className="size-4 shrink-0 accent-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
+                    checked={hasExpiry || isOpen}
+                    onChange={(event) => {
+                        if (event.target.checked) {
+                            openEditor()
+                        } else if (hasExpiry) {
+                            clearExpiry()
+                        } else {
+                            closeEditor()
+                        }
+                    }}
+                    aria-expanded={isOpen}
+                    aria-controls={`${id}-editor`}
+                    className="size-5 shrink-0 accent-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
                 />
 
                 <span className="text-sm font-medium text-jood-green">
@@ -85,31 +128,53 @@ function IngredientExpiry({ ingredient, onChange }) {
                 </span>
             </label>
 
-            {enabled && (
-                <div id={`${id}-options`} className="mt-2 min-w-0">
-                    <fieldset className="m-0 min-w-0 border-0 p-0">
-                        <legend className="mb-3 text-sm text-jood-green/75">
+            {isOpen && (
+                <div
+                    id={`${id}-expiry-options`}
+                    className="absolute right-0 top-full z-30 mt-1 w-[min(18rem,calc(100vw_-_4rem))] rounded-2xl border border-jood-green/15 bg-white/90 p-4 shadow-xl backdrop-blur-sm"                              >
+                    <div className="flex items-center justify-between gap-3">
+                        <p className="font-medium">
                             قد إيش باقي تقريبًا؟
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={closeEditor}
+                            aria-label="إغلاق"
+                            className="flex size-9 items-center justify-center rounded-full hover:bg-jood-background"
+                        >
+                            <X size={18} aria-hidden="true" />
+                        </button>
+                    </div>
+
+                    <fieldset className="mt-4 border-0 p-0">
+                        <legend className="sr-only">
+                            مدة صلاحية المكوّن
                         </legend>
 
-                        <div className="grid min-w-0 grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                             {expiryOptions.map((option) => (
                                 <label
                                     key={option.value}
-                                    className="min-w-0 cursor-pointer"
+                                    className="cursor-pointer"
                                 >
                                     <input
                                         type="radio"
                                         name={`${id}-expiry`}
                                         value={option.value}
                                         checked={mode === option.value}
-                                        onChange={() =>
-                                            selectMode(option.value)
-                                        }
+                                        onChange={() => {
+                                            setMode(option.value)
+                                            setExpiryError('')
+
+                                            if (option.value !== 'date') {
+                                                setDate('')
+                                            }
+                                        }}
                                         className="peer sr-only"
                                     />
 
-                                    <span className="flex min-h-11 items-center justify-center rounded-xl border border-jood-green/20 bg-white px-2 py-2 text-center text-sm transition-colors peer-checked:border-jood-green peer-checked:bg-jood-lime peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-jood-green motion-reduce:transition-none">
+                                    <span className="jood-button flex min-h-11 items-center justify-center rounded-xl border border-jood-green/20 px-2 py-2 text-center text-sm transition-colors peer-checked:border-jood-green peer-checked:bg-jood-lime">
                                         {option.label}
                                     </span>
                                 </label>
@@ -118,7 +183,7 @@ function IngredientExpiry({ ingredient, onChange }) {
                     </fieldset>
 
                     {mode === 'date' && (
-                        <div className="mt-3 w-full min-w-0 max-w-[220px]">
+                        <div className="mt-3">
                             <label
                                 htmlFor={`${id}-date`}
                                 className="mb-2 block text-sm text-jood-green/75"
@@ -130,19 +195,39 @@ function IngredientExpiry({ ingredient, onChange }) {
                                 id={`${id}-date`}
                                 type="date"
                                 dir="ltr"
-                                value={ingredient.expiryDate || ''}
-                                data-filled={Boolean(ingredient.expiryDate)}
-                                onChange={(event) =>
-                                    onChange({
-                                        expiringSoon: true,
-                                        expiryMode: 'date',
-                                        expiryDate: event.target.value,
-                                        expiryEstimateRecordedOn: '',
-                                    })
-                                }
+                                value={date}
+                                onChange={(event) => {
+                                    setDate(event.target.value)
+                                    setExpiryError('')
+                                }}
+                                data-filled={Boolean(date)}
                                 className={`${inputClassName} ingredient-date`}
                             />
                         </div>
+                    )}
+
+                    {expiryError && (
+                        <p className="mt-3 text-sm text-red-700">
+                            {expiryError}
+                        </p>
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={saveExpiry}
+                        className="jood-button mt-4 min-h-11 w-full rounded-full bg-jood-green px-4 py-2 font-medium text-white hover:bg-jood-lime hover:text-jood-green"
+                    >
+                        حفظ
+                    </button>
+
+                    {hasExpiry && (
+                        <button
+                            type="button"
+                            onClick={clearExpiry}
+                            className="mt-2 min-h-10 w-full rounded-full text-sm text-jood-green/60 hover:bg-jood-background"
+                        >
+                            إزالة تحديد الصلاحية
+                        </button>
                     )}
                 </div>
             )}
@@ -307,7 +392,7 @@ export default function Home({ userName = '' }) {
                     </Link>
 
                     <details className="group relative">
-                        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full bg-jood-background px-4 py-2 text-sm font-medium transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
+                        <summary className="jood-button flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full bg-jood-background px-4 py-2 text-sm font-medium transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
                             <UserRound size={20} aria-hidden="true" />
                             <span>حسابي</span>
 
@@ -344,7 +429,7 @@ export default function Home({ userName = '' }) {
                 </div>
             </header>
 
-            <main className="jood-fixed-watermark relative isolate mx-3 my-3 min-h-[80svh] flex-1 overflow-hidden rounded-3xl bg-jood-background px-3 py-6 sm:mx-5 sm:px-8 lg:py-14">
+            <main className="jood-fixed-watermark relative isolate mx-3 my-3 min-h-[90svh] flex-1 overflow-hidden rounded-3xl bg-jood-background px-3 py-6 sm:mx-5 sm:px-8 lg:py-14">
 
                 <div className="mx-auto min-w-0 max-w-5xl">
                     <div className="mb-8 lg:mb-10">
@@ -446,7 +531,7 @@ export default function Home({ userName = '' }) {
 
                                 <button
                                     type="submit"
-                                    className="mt-5 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-jood-green px-5 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+                                    className="jood-button mt-5 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-jood-green px-5 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
                                 >
                                     <Plus size={20} aria-hidden="true" />
                                     إضافة المكوّن
@@ -491,7 +576,7 @@ export default function Home({ userName = '' }) {
                                                     removeIngredient(item.id)
                                                 }
                                                 aria-label={`حذف ${item.name}`}
-                                                className="ms-auto flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-jood-green transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
+                                                className="jood-button ms-auto flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-jood-green transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
                                             >
                                                 <X
                                                     size={18}
@@ -520,7 +605,7 @@ export default function Home({ userName = '' }) {
                             <button
                                 type="button"
                                 onClick={handleContinue}
-                                className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:px-10"
+                                className="jood-button inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:px-10"
                             >
                                 <ArrowRight size={20} aria-hidden="true" />
                                 التالي

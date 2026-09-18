@@ -81,7 +81,7 @@ export default function Recipes() {
      * هنا نوحّد شكلها مع الوصفات التي تستخدمها
      * واجهة Recipes.
      */
-const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
+    const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
         ...recipe,
 
         minutes:
@@ -135,7 +135,7 @@ const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
                 <Link
                     to={
                         showSavedOnly &&
-                        navigationState?.returnTo === '/account'
+                            navigationState?.returnTo === '/account'
                             ? '/account'
                             : '/ingredients/review'
                     }
@@ -143,7 +143,7 @@ const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
                     className={secondaryButton}
                 >
                     {showSavedOnly &&
-                    navigationState?.returnTo === '/account'
+                        navigationState?.returnTo === '/account'
                         ? 'العودة لحسابي'
                         : 'تعديل المكونات'}
 
@@ -298,7 +298,7 @@ const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
                 )}
 
             <div className="mt-6 grid min-w-0 grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {visible.map((recipe) => {
+                {visible.map((recipe, index) => {
                     const isSaved =
                         savedIds.includes(recipe.id)
 
@@ -309,11 +309,9 @@ const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
                     return (
                         <article
                             key={recipe.id}
-                            className={`flex min-w-0 flex-col overflow-hidden rounded-3xl bg-white ${
-                                priority
-                                    ? 'ring-2 ring-jood-green/40'
-                                    : ''
-                            }`}
+                            style={{ animationDelay: `${index * 90}ms` }}
+                            className={`jood-recipe-card recipe-enter flex min-w-0 flex-col overflow-hidden rounded-3xl bg-white ${priority ? 'ring-2 ring-jood-green/40' : ''
+                                }`}
                         >
                             <div className="relative flex h-36 items-center justify-center bg-jood-lime/65">
                                 <div className="flex size-20 items-center justify-center rounded-full bg-white/65">
