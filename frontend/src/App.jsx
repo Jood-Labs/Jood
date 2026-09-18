@@ -11,7 +11,6 @@ import Preferences from './pages/Preferences'
 import IngredientReview from './pages/IngredientReview'
 import Recipes from './pages/Recipes'
 import RecipeDetails from './pages/RecipeDetails'
-import ShoppingList from './pages/ShoppingList'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
 import ChangePassword from './pages/ChangePassword'
@@ -96,15 +95,6 @@ function AppRoutes() {
                     element={
                         <ProtectedRoute>
                             <RecipeDetails />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/shopping-list"
-                    element={
-                        <ProtectedRoute>
-                            <ShoppingList />
                         </ProtectedRoute>
                     }
                 />

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 
 import logo from '../assets/images/jood3.svg'
+import { detectIngredients } from '../services/ingredientApi'
 
 const fieldClass =
     'min-h-12 w-full min-w-0 rounded-xl border border-jood-green/20 bg-white px-3 py-3 text-base text-jood-green placeholder:text-jood-green/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
@@ -328,6 +329,8 @@ export default function IngredientReview() {
     const [error, setError] = useState('')
     const [imageError, setImageError] = useState('')
     const [announcement, setAnnouncement] = useState('')
+    const [requestMessage, setRequestMessage] = useState('')
+    const [isDetecting, setIsDetecting] = useState(false)
 
     const canSuggest =
         ingredients.some((item) => item.name?.trim()) || Boolean(imageFile)
@@ -375,17 +378,15 @@ export default function IngredientReview() {
             return
         }
 
-        setIngredients((current) => [
-            ...current,
-            {
-                id: nextIdRef.current++,
-                name,
-                expiringSoon: false,
-                expiryMode: '',
-                expiryDate: '',
-                expiryEstimateRecordedOn: '',
-            },
-        ])
+        const item = {
+    id: nextIdRef.current++,
+    name,
+    source: 'review-manual',
+    expiringSoon: false,
+    expiryMode: '',
+    expiryDate: '',
+    expiryEstimateRecordedOn: '',
+}
 
         setNewIngredient('')
         setError('')
@@ -393,26 +394,79 @@ export default function IngredientReview() {
         nameInputRef.current?.focus()
     }
 
-    function handleImageSelection(event) {
-        const file = event.target.files?.[0]
-        event.target.value = ''
+    async function handleImageSelection(event) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
 
-        if (!file) return
+    if (!file) return
 
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-            setImageError('اختَر صورة بصيغة JPG أو PNG أو WEBP')
-            return
-        }
+    const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+    ]
 
-        if (file.size > 10 * 1024 * 1024) {
-            setImageError('حجم الصورة لازم يكون أقل من ١٠ ميجابايت')
-            return
-        }
-
-        setImageFile(file)
-        setImageError('')
-        setAnnouncement('تمت إضافة الصورة')
+    if (!allowedTypes.includes(file.type)) {
+        setImageError('اختَر صورة بصيغة JPG أو PNG أو WEBP')
+        return
     }
+
+    if (file.size > 10 * 1024 * 1024) {
+        setImageError('حجم الصورة لازم يكون أقل من ١٠ ميجابايت')
+        return
+    }
+
+    setImageError('')
+setRequestMessage('')
+setIsDetecting(true)
+
+
+setIngredients((current) =>
+    current.filter((item) => !item.detectedByAI)
+)
+
+// نعرض اسم الصورة الجديدة مباشرة
+setImageFile(file)
+
+    try {
+        const response = await detectIngredients(file)
+
+        const detectedIngredients = (response.ingredients || []).map(
+    (item) => ({
+        id: nextIdRef.current++,
+        name: item.name,
+        confidence: item.confidence,
+        detectedByAI: true,
+        source: 'image',
+        expiringSoon: false,
+        expiryMode: '',
+        expiryDate: '',
+        expiryEstimateRecordedOn: '',
+    })
+)
+
+        setIngredients((current) => {
+            const manualIngredients = current.filter(
+                (item) => !item.detectedByAI
+            )
+
+            return [
+                ...manualIngredients,
+                ...detectedIngredients,
+            ]
+        })
+
+        setAnnouncement('تم تحليل الصورة الجديدة وتحديث المكونات')
+    } catch (err) {
+        setImageError(
+            err instanceof Error
+                ? err.message
+                : 'تعذّر تحليل الصورة. حاول مرة ثانية.'
+        )
+    } finally {
+        setIsDetecting(false)
+    }
+}
 
     function removeImage() {
         setImageFile(null)
@@ -544,11 +598,18 @@ export default function IngredientReview() {
                             />
 
                             <button
-                                type="button"
-                                onClick={() => imageInputRef.current?.click()}
-                                aria-label={imageFile ? 'تغيير الصورة' : 'إضافة صورة'}
-                                title={imageFile ? 'تغيير الصورة' : 'إضافة صورة'}
-                                className={`${iconButton} bg-jood-background`}
+    type="button"
+    disabled={isDetecting}
+    onClick={() =>
+        imageInputRef.current?.click()
+    }
+                                aria-label={
+                                    imageFile ? 'تغيير الصورة' : 'إضافة صورة'
+                                }
+                                title={
+                                    imageFile ? 'تغيير الصورة' : 'إضافة صورة'
+                                }
+                                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-jood-background transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
                             >
                                 <Camera size={21} aria-hidden="true" />
                             </button>
@@ -588,8 +649,29 @@ export default function IngredientReview() {
                             </p>
                         )}
 
-                        {ingredients.length > 0 ? (
-                            <ul className="mt-5 flex min-w-0 flex-col gap-3">
+                        {isDetecting && (
+    <div
+        role="status"
+        className="mt-5 flex min-h-32 flex-col items-center justify-center rounded-2xl bg-jood-background p-6 text-center"
+    >
+        <span
+            aria-hidden="true"
+            className="block size-8 animate-spin rounded-full border-2 border-jood-green/20 border-t-jood-green"
+        />
+
+        <p className="mt-4 font-medium">
+            جاري تحليل الصورة الجديدة...
+        </p>
+
+        <p className="mt-2 text-sm text-jood-green/60">
+            بنحدّث المكونات حسب الصورة اللي اخترتها
+        </p>
+    </div>
+)}
+
+                        {!isDetecting && (
+    ingredients.length > 0 ? (
+                            <ul className="mt-4 grid min-w-0 grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                 {ingredients.map((item) => (
                                     <li
                                         key={item.id}
@@ -645,6 +727,7 @@ export default function IngredientReview() {
                                     ? 'الصورة مضافة، ولم تُستخرج منها مكونات بعد'
                                     : 'أضف صورة أو اكتب المكونات الموجودة عندك'}
                             </p>
+                        )
                         )}
 
                         <form onSubmit={addIngredient} className="mt-5">
@@ -792,13 +875,15 @@ export default function IngredientReview() {
 
                     <div className="mt-6 flex justify-start">
                         <button
-                            type="button"
-                            onClick={handleSuggest}
-                            disabled={!canSuggest}
-                            className={`${primaryButton} w-full sm:w-auto`}
-                        >
-                            اقترح لي وصفات
-                        </button>
+    type="button"
+    onClick={handleSuggest}
+    disabled={!canSuggest || isDetecting}
+    className={`${primaryButton} w-full sm:w-auto`}
+>
+    {isDetecting
+        ? 'جاري تحليل الصورة...'
+        : 'اقترح لي وصفات'}
+</button>
                     </div>
                 </div>
             </main>

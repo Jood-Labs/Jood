@@ -1,15 +1,35 @@
 import { apiFetch } from './api'
 
+
 export async function getShoppingList() {
     return apiFetch('/shopping-list/', {
         method: 'GET',
     })
 }
 
+
 export async function addRecipeMissingIngredients(recipeId) {
-    return apiFetch(`/shopping-list/from-recipe/${recipeId}`, {
-        method: 'POST',
-    })
+    return apiFetch(
+        `/shopping-list/from-recipe/${recipeId}`,
+        {
+            method: 'POST',
+        }
+    )
+}
+
+export async function addSingleRecipeIngredient(
+    recipeId,
+    ingredientKey
+) {
+    return apiFetch(
+        `/shopping-list/from-recipe/${recipeId}/item`,
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                ingredient_key: ingredientKey,
+            }),
+        }
+    )
 }
 
 export async function updateShoppingListItem(
@@ -21,6 +41,7 @@ export async function updateShoppingListItem(
         body: JSON.stringify(updates),
     })
 }
+
 
 export async function deleteShoppingListItem(itemId) {
     return apiFetch(`/shopping-list/${itemId}`, {
