@@ -52,6 +52,9 @@ COMMON_STAPLES = {
     "salt",
     "black pepper",
     "cooking oil",
+    "olive oil",
+    "vegetable oil",
+    "sunflower oil",
     "water",
 }
 
@@ -871,10 +874,11 @@ def ground_recipe(
 
         ingredients.append({
             "name": item.name,
+            "reference": item.reference,
             "quantity": normalize_quantity(item.quantity),
             "available": is_available or is_staple,
             "staple": is_staple,
-        })
+})
 
     # Relaxed rule for a tiny compatible pantry:
     # if only 1-2 usable ingredients remain, each recipe only needs to use 1.

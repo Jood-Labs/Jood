@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
     ArrowLeft,
     Check,
@@ -13,10 +13,12 @@ import {
     secondaryButton,
 } from '../components/recipe/recipeStyles'
 import useShoppingList from '../hooks/useShoppingList'
+import { createCartFromShoppingList } from '../services/cartApi'
+
 
 function ShoppingItem({
     item,
-    updateQuantity,
+    updateCartQuantity,
     toggleChecked,
     removeItem,
 }) {
@@ -59,26 +61,46 @@ function ShoppingItem({
                 </button>
             </div>
 
-            <p className="mt-1 text-xs leading-6 text-jood-green/60">
-                لوصفة {item.recipeName}
-            </p>
-
-            <label className="mt-4 block">
-                <span className="mb-2 block text-sm text-jood-green/75">
-                    الكمية المطلوبة
+            <div className="mt-4 flex items-center justify-between">
+                <span className="text-sm text-jood-green/70">
+                    الكمية
                 </span>
 
-                <input
-                    type="text"
-                    value={item.quantity}
-                    maxLength={80}
-                    onChange={(event) =>
-                        updateQuantity(item.id, event.target.value)
-                    }
-                    placeholder="مثل: ٣ حبات"
-                    className="min-h-12 w-full min-w-0 rounded-xl border border-jood-green/20 bg-white px-3 py-3 text-base text-jood-green placeholder:text-jood-green/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
-                />
-            </label>
+                <div className="flex items-center gap-3 rounded-full bg-white px-2 py-1">
+                    <button
+                        type="button"
+                        disabled={(item.cart_quantity || 1) <= 1}
+                        onClick={() =>
+                            updateCartQuantity(
+                                item.id,
+                                (item.cart_quantity || 1) - 1
+                            )
+                        }
+                        className="flex size-9 items-center justify-center rounded-full text-lg transition-colors hover:bg-jood-lime disabled:cursor-not-allowed disabled:opacity-30"
+                        aria-label={`تقليل كمية ${item.name}`}
+                    >
+                        −
+                    </button>
+
+                    <span className="min-w-6 text-center font-medium">
+                        {item.cart_quantity || 1}
+                    </span>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            updateCartQuantity(
+                                item.id,
+                                (item.cart_quantity || 1) + 1
+                            )
+                        }
+                        className="flex size-9 items-center justify-center rounded-full text-lg transition-colors hover:bg-jood-lime"
+                        aria-label={`زيادة كمية ${item.name}`}
+                    >
+                        +
+                    </button>
+                </div>
+            </div>
 
             {item.checked && (
                 <p className="mt-3 inline-flex items-center gap-1 text-xs text-jood-green/70">
@@ -90,14 +112,16 @@ function ShoppingItem({
     )
 }
 
+
 export default function ShoppingList() {
     const location = useLocation()
+    const navigate = useNavigate()
     const navigationState = location.state
 
     const {
         items,
         message,
-        updateQuantity,
+        updateCartQuantity,
         toggleChecked,
         removeItem,
         clearChecked,
@@ -106,13 +130,34 @@ export default function ShoppingList() {
     const checkedCount = items.filter((item) => item.checked).length
     const remainingCount = items.length - checkedCount
 
-    const returningToAccount = navigationState?.returnTo === '/account'
+    const returningToAccount =
+        navigationState?.returnTo === '/account'
 
     const backPath = returningToAccount
         ? '/account'
         : navigationState?.fromRecipeId
-            ? `/recipes/${encodeURIComponent(navigationState.fromRecipeId)}`
+            ? `/recipes/${encodeURIComponent(
+                navigationState.fromRecipeId
+            )}`
             : '/recipes'
+
+    async function handleCreateCart() {
+        try {
+            const cart = await createCartFromShoppingList()
+
+            navigate('/cart', {
+                state: {
+                    ...navigationState,
+                    cart,
+                },
+            })
+        } catch (error) {
+            console.error(
+                'Failed to create cart:',
+                error
+            )
+        }
+    }
 
     return (
         <RecipeLayout navigationState={navigationState}>
@@ -128,7 +173,10 @@ export default function ShoppingList() {
                             ? 'العودة للوصفة'
                             : 'العودة للوصفات'}
 
-                    <ArrowLeft size={18} aria-hidden="true" />
+                    <ArrowLeft
+                        size={18}
+                        aria-hidden="true"
+                    />
                 </Link>
             </div>
 
@@ -138,11 +186,15 @@ export default function ShoppingList() {
                 </h1>
 
                 <p className="mt-3 leading-8 text-jood-green/75">
-                    كل اللي ناقصك هنا، عدّل الكميات وعلّم على اللي توفّر
+                    كل اللي ناقصك هنا، وعلّم على المكونات اللي توفّرت عندك
                 </p>
             </div>
 
-            <p role="status" aria-atomic="true" className="mt-3 text-sm">
+            <p
+                role="status"
+                aria-atomic="true"
+                className="mt-3 text-sm"
+            >
                 {message}
             </p>
 
@@ -204,17 +256,34 @@ export default function ShoppingList() {
                             <ShoppingItem
                                 key={item.id}
                                 item={item}
-                                updateQuantity={updateQuantity}
-                                toggleChecked={toggleChecked}
-                                removeItem={removeItem}
+                                updateCartQuantity={
+                                    updateCartQuantity
+                                }
+                                toggleChecked={
+                                    toggleChecked
+                                }
+                                removeItem={
+                                    removeItem
+                                }
                             />
                         ))}
                     </ul>
 
-                    <p className="mt-5 text-xs leading-6 text-jood-green/60">
-                        لو تكرر مكوّن في أكثر من وصفة، تظهر كمية كل وصفة
-                        لحالها عشان تراجع إجمالي احتياجك
-                    </p>
+                    {remainingCount > 0 && (
+                        <div className="mt-6 flex justify-end">
+                            <button
+                                type="button"
+                                onClick={handleCreateCart}
+                                className={primaryButton}
+                            >
+                                <ShoppingBasket
+                                    size={18}
+                                    aria-hidden="true"
+                                />
+                                أضف المنتجات للسلة
+                            </button>
+                        </div>
+                    )}
                 </section>
             )}
         </RecipeLayout>

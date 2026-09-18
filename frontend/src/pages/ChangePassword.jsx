@@ -12,6 +12,7 @@ import {
     primaryButton,
     secondaryButton,
 } from '../components/recipe/recipeStyles'
+import { changePassword } from '../services/authApi'
 
 function PasswordField({
     label,
@@ -105,52 +106,85 @@ export default function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [errors, setErrors] = useState({})
     const [message, setMessage] = useState('')
+    const [loading, setLoading] = useState(false)
 
     function clearFeedback() {
         setErrors({})
         setMessage('')
     }
 
-    function handleSubmit(event) {
-        event.preventDefault()
+    async function handleSubmit(event) {
+    event.preventDefault()
 
-        if (!currentPassword.trim()) {
-            setErrors({
-                current: 'اكتب كلمة المرور الحالية',
-            })
-            currentRef.current?.focus()
-            return
-        }
+    if (loading) return
 
-        if (newPassword.trim().length < 8) {
-            setErrors({
-                new: 'كلمة المرور الجديدة لازم تكون ٨ أحرف على الأقل',
-            })
-            newRef.current?.focus()
-            return
-        }
-
-        if (newPassword === currentPassword) {
-            setErrors({
-                new: 'اختَر كلمة مرور مختلفة عن الحالية',
-            })
-            newRef.current?.focus()
-            return
-        }
-
-        if (newPassword !== confirmPassword) {
-            setErrors({
-                confirm: 'كلمتا المرور غير متطابقتين',
-            })
-            confirmRef.current?.focus()
-            return
-        }
-
-        setErrors({})
-
-        // BACKEND: Send currentPassword and newPassword to the authenticated password-change endpoint; do not store or log either password.
-        setMessage('تغيير كلمة المرور غير متاح حاليًا')
+    if (!currentPassword.trim()) {
+        setErrors({
+            current: 'اكتب كلمة المرور الحالية',
+        })
+        currentRef.current?.focus()
+        return
     }
+
+    if (newPassword.trim().length < 8) {
+        setErrors({
+            new: 'كلمة المرور الجديدة لازم تكون ٨ أحرف على الأقل',
+        })
+        newRef.current?.focus()
+        return
+    }
+
+    if (newPassword === currentPassword) {
+        setErrors({
+            new: 'اختَر كلمة مرور مختلفة عن الحالية',
+        })
+        newRef.current?.focus()
+        return
+    }
+
+    if (newPassword !== confirmPassword) {
+        setErrors({
+            confirm: 'كلمتا المرور غير متطابقتين',
+        })
+        confirmRef.current?.focus()
+        return
+    }
+
+    setErrors({})
+    setMessage('')
+    setLoading(true)
+
+    try {
+        await changePassword(
+            currentPassword,
+            newPassword
+        )
+
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+
+        setMessage('تم تغيير كلمة المرور بنجاح')
+    } catch (error) {
+        if (
+            error.message ===
+            'Current password is incorrect'
+        ) {
+            setErrors({
+                current: 'كلمة المرور الحالية غير صحيحة',
+            })
+
+            currentRef.current?.focus()
+        } else {
+            setMessage(
+                error.message ||
+                'تعذّر تغيير كلمة المرور'
+            )
+        }
+    } finally {
+        setLoading(false)
+    }
+}
 
     return (
         <RecipeLayout>
@@ -222,11 +256,14 @@ export default function ChangePassword() {
                     </div>
 
                     <button
-                        type="submit"
-                        className={`${primaryButton} mt-6 w-full`}
-                    >
-                        حفظ كلمة المرور
-                    </button>
+    type="submit"
+    disabled={loading}
+    className={`${primaryButton} mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60`}
+>
+    {loading
+        ? 'جاري الحفظ...'
+        : 'حفظ كلمة المرور'}
+</button>
 
                     <p
                         role="status"

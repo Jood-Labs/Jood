@@ -8,6 +8,7 @@ import {
   Check,
 } from 'lucide-react'
 import logo from '../../assets/images/jood.svg'
+import { resetPassword } from '../../services/authApi'
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
@@ -16,20 +17,53 @@ export default function ResetPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const [status, setStatus] = useState('idle')
-
-  const timersRef = useRef([])
+  const [recoveryToken, setRecoveryToken] = useState('')
+  const [linkError, setLinkError] = useState('')
   const submittingRef = useRef(false)
   const confirmInputRef = useRef(null)
   const titleRef = useRef(null)
+  const recoveryProcessedRef = useRef(false)
 
   const isSaving = status === 'loading' || status === 'check'
   const isSuccess = status === 'success'
 
   useEffect(() => {
-    return () => {
-      timersRef.current.forEach(clearTimeout)
-    }
-  }, [])
+  // Prevent React StrictMode from processing the recovery URL twice
+  if (recoveryProcessedRef.current) return
+
+  recoveryProcessedRef.current = true
+
+  const hashParams = new URLSearchParams(
+    window.location.hash.substring(1)
+  )
+
+  const accessToken = hashParams.get('access_token')
+  const type = hashParams.get('type')
+  const recoveryError = hashParams.get('error_description')
+
+  if (recoveryError) {
+    setLinkError(
+      'رابط استعادة كلمة المرور غير صالح أو انتهت صلاحيته.'
+    )
+    return
+  }
+
+  if (!accessToken || type !== 'recovery') {
+    setLinkError(
+      'رابط استعادة كلمة المرور غير صالح أو انتهت صلاحيته.'
+    )
+    return
+  }
+
+  setRecoveryToken(accessToken)
+
+  // Remove sensitive recovery tokens from the address bar
+  window.history.replaceState(
+    {},
+    document.title,
+    window.location.pathname
+  )
+}, [])
 
   useEffect(() => {
     if (isSuccess) {
@@ -37,37 +71,51 @@ export default function ResetPassword() {
     }
   }, [isSuccess])
 
-  function handleSubmit(event) {
-    event.preventDefault()
+  async function handleSubmit(event) {
+  event.preventDefault()
 
-    if (submittingRef.current) return
+  if (submittingRef.current) return
 
-    if (password !== confirmPassword) {
-      setError('كلمتا المرور غير متطابقتين.')
-      confirmInputRef.current?.focus()
-      return
-    }
-
-    setError('')
-    submittingRef.current = true
-    setStatus('loading')
-
-    // BACKEND: Replace the preview timers with the reset-password request using the reset token/code supplied by the backend.
-    const loadingTimer = setTimeout(() => {
-      setStatus('check')
-
-      const successTimer = setTimeout(() => {
-        setPassword('')
-        setConfirmPassword('')
-        setStatus('success')
-        timersRef.current = []
-      }, 700)
-
-      timersRef.current.push(successTimer)
-    }, 1500)
-
-    timersRef.current.push(loadingTimer)
+  if (!recoveryToken) {
+    setError(
+      'رابط استعادة كلمة المرور غير صالح أو انتهت صلاحيته.'
+    )
+    return
   }
+
+  if (password.length < 8) {
+    setError('كلمة المرور لازم تكون ٨ أحرف على الأقل.')
+    return
+  }
+
+  if (password !== confirmPassword) {
+    setError('كلمتا المرور غير متطابقتين.')
+    confirmInputRef.current?.focus()
+    return
+  }
+
+  setError('')
+  submittingRef.current = true
+  setStatus('loading')
+
+  try {
+    await resetPassword(recoveryToken, password)
+
+    setPassword('')
+    setConfirmPassword('')
+    setRecoveryToken('')
+    setStatus('success')
+  } catch (error) {
+    setStatus('idle')
+
+    setError(
+      error.message ||
+      'تعذّر تغيير كلمة المرور. اطلب رابط استعادة جديدًا وحاول مرة أخرى.'
+    )
+  } finally {
+    submittingRef.current = false
+  }
+}
 
   const inputClassName =
     'min-h-12 w-full rounded-xl border border-jood-green/20 bg-jood-background/50 py-3 pl-4 pr-14 text-base text-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
@@ -129,7 +177,24 @@ export default function ResetPassword() {
             </>
           )}
 
-          {isSuccess ? (
+          {linkError ? (
+  <div className="mt-6 rounded-3xl bg-white px-6 py-8 text-center shadow-sm sm:px-8 sm:py-9">
+    <h1 className="stylistic-text text-2xl font-bold leading-relaxed text-jood-green">
+      الرابط غير صالح
+    </h1>
+
+    <p className="mt-3 text-base leading-7 text-jood-green/70">
+      {linkError}
+    </p>
+
+    <Link
+      to="/login"
+      className={`${buttonClassName} mt-6 hover:bg-jood-lime hover:text-jood-green`}
+    >
+      العودة لتسجيل الدخول
+    </Link>
+  </div>
+) : isSuccess ? (
             <div className="mt-6 rounded-3xl bg-white px-6 py-8 text-center shadow-sm sm:px-8 sm:py-9">
 
               <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-jood-lime text-jood-green">

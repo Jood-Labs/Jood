@@ -17,8 +17,8 @@ export default function RecipeIngredients({
     )
 
     const pending = missing.filter(
-        (item) => !contains(recipe.id, item.name)
-    )
+    (item) => !contains(item.reference)
+)
 
     const shoppingState = {
         ...navigationState,
@@ -33,8 +33,8 @@ export default function RecipeIngredients({
             <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
                 <p className="text-sm text-jood-green/70">
                     {missing.length > 0
-                        ? `${missing.length} مكونات مو بقائمتك`
-                        : 'كل المكونات موجودة بقائمتك'}
+    ? `${missing.length} مكونات ناقصة`
+    : 'ما تحتاج مكونات إضافية'}
                 </p>
 
                 {pending.length > 0 ? (
@@ -68,7 +68,7 @@ export default function RecipeIngredients({
 
             <ul className="space-y-3">
                 {recipe.ingredients.map((item) => {
-                    const added = contains(recipe.id, item.name)
+                    const added = contains(item.reference)
 
                     return (
                         <li
@@ -91,46 +91,50 @@ export default function RecipeIngredients({
                                             : 'bg-white text-jood-green/60'
                                     }`}
                                 >
-                                    {item.available
-                                        ? 'موجود بقائمتك'
-                                        : 'مو بقائمتك'}
+                                    {item.staple
+    ? 'من الأساسيات المنزلية'
+    : item.available
+      ? 'موجود ضمن مكوناتك'
+      : 'مكوّن ناقص'}
                                 </span>
                             </div>
 
-                            <button
-                                type="button"
-                                disabled={added}
-                                onClick={() =>
-                                    addIngredients(recipe, [item])
-                                }
-                                aria-label={
-                                    added
-                                        ? `${item.name} مضاف لقائمة التسوق`
-                                        : `إضافة ${item.name} لقائمة التسوق`
-                                }
-                                title={
-                                    added
-                                        ? 'مضاف لقائمة التسوق'
-                                        : 'إضافة لقائمة التسوق'
-                                }
-                                className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green ${
-                                    added
-                                        ? 'cursor-default bg-jood-lime/60'
-                                        : 'bg-white hover:bg-jood-lime'
-                                }`}
-                            >
-                                {added ? (
-                                    <Check
-                                        size={19}
-                                        aria-hidden="true"
-                                    />
-                                ) : (
-                                    <Plus
-                                        size={19}
-                                        aria-hidden="true"
-                                    />
-                                )}
-                            </button>
+                            {!item.available && (
+    <button
+        type="button"
+        disabled={added}
+        onClick={() =>
+            addIngredients(recipe, [item])
+        }
+        aria-label={
+            added
+                ? `${item.name} مضاف لقائمة التسوق`
+                : `إضافة ${item.name} لقائمة التسوق`
+        }
+        title={
+            added
+                ? 'مضاف لقائمة التسوق'
+                : 'إضافة لقائمة التسوق'
+        }
+        className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green ${
+            added
+                ? 'cursor-default bg-jood-lime/60'
+                : 'bg-white hover:bg-jood-lime'
+        }`}
+    >
+        {added ? (
+            <Check
+                size={19}
+                aria-hidden="true"
+            />
+        ) : (
+            <Plus
+                size={19}
+                aria-hidden="true"
+            />
+        )}
+    </button>
+)}
                         </li>
                     )
                 })}

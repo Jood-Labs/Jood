@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, Eye, EyeOff, LoaderCircle, Check } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { ArrowLeft, Eye, EyeOff, LoaderCircle } from 'lucide-react'
 import logo from '../../assets/images/jood.svg'
+import { signup, login } from '../../services/authApi'
 
 export default function SignUp() {
     const [name, setName] = useState('')
@@ -13,17 +14,8 @@ export default function SignUp() {
     const [passwordError, setPasswordError] = useState('')
     const [message, setMessage] = useState('')
     const [submitStatus, setSubmitStatus] = useState('idle')
-    const timersRef = useRef([])
     const submittingRef = useRef(false)
     const navigate = useNavigate()
-
-    useEffect(() => {
-        const timers = timersRef.current
-
-        return () => {
-            timers.forEach(clearTimeout)
-        }
-    }, [])
 
     const inputClassName =
         'min-h-12 w-full rounded-xl border border-jood-green/20 bg-jood-background/50 px-4 py-3 text-base text-jood-green placeholder:text-right placeholder:text-jood-green/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
@@ -31,40 +23,53 @@ export default function SignUp() {
     const eyeButtonClassName =
         'absolute inset-y-0 right-1 my-auto flex size-11 items-center justify-center rounded-lg text-jood-green/70 hover:text-jood-green focus-visible:outline-2 focus-visible:outline-jood-green'
 
-    function handleSubmit(event) {
-        event.preventDefault()
+    async function handleSubmit(event) {
+    event.preventDefault()
 
-        if (submittingRef.current) return
+    if (submittingRef.current) return
 
-        setMessage('')
+    setMessage('')
 
-        if (!name.trim()) {
-            setMessage('اكتب اسمك قبل المتابعة.')
-            return
-        }
-
-        if (password !== confirmPassword) {
-            setPasswordError('كلمتا المرور غير متطابقتين.')
-            return
-        }
-
-        setPasswordError('')
-        submittingRef.current = true
-        setSubmitStatus('loading')
-
-        // BACKEND: Replace the preview timers with the sign-up request. On success, keep the navigation to /preferences/setup.
-        const loadingTimer = setTimeout(() => {
-            setSubmitStatus('check')
-
-            const successTimer = setTimeout(() => {
-                navigate('/preferences/setup', { replace: true })
-            }, 700)
-
-            timersRef.current.push(successTimer)
-        }, 1500)
-
-        timersRef.current.push(loadingTimer)
+    if (!name.trim()) {
+        setMessage('اكتب اسمك قبل المتابعة.')
+        return
     }
+
+    if (password !== confirmPassword) {
+        setPasswordError('كلمتا المرور غير متطابقتين.')
+        return
+    }
+
+    setPasswordError('')
+    submittingRef.current = true
+    setSubmitStatus('loading')
+
+    try {
+        await signup(
+            name.trim(),
+            email.trim(),
+            password
+        )
+
+        await login(
+            email.trim(),
+            password
+        )
+
+        setSubmitStatus('success')
+
+        navigate('/preferences/setup', {
+            replace: true,
+        })
+    } catch (error) {
+        setMessage(
+            error.message || 'تعذّر إنشاء الحساب'
+        )
+
+        setSubmitStatus('idle')
+        submittingRef.current = false
+    }
+}
 
     return (
         <div className="min-h-dvh bg-white p-3 sm:p-5">
@@ -289,13 +294,6 @@ export default function SignUp() {
                                         className="animate-spin motion-reduce:animate-none"
                                     />
                                     <span>جاري إنشاء الحساب</span>
-                                </>
-                            )}
-
-                            {submitStatus === 'check' && (
-                                <>
-                                    <Check size={24} aria-hidden="true" />
-                                    <span className="sr-only">تم إنشاء الحساب</span>
                                 </>
                             )}
 

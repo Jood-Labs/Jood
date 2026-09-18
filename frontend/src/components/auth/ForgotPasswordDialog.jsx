@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, LoaderCircle, Check, Mail } from 'lucide-react'
+import { forgotPassword } from '../../services/authApi'
 
 export default function ForgotPasswordDialog({
     onClose,
@@ -54,39 +55,41 @@ export default function ForgotPasswordDialog({
         onClose()
     }
 
-    function sendRecoveryRequest() {
-        if (submittingRef.current || cooldown > 0) return
+    async function sendRecoveryRequest() {
+    if (submittingRef.current || cooldown > 0) return
 
-        const isResend = showSuccess
+    const isResend = showSuccess
 
-        submittingRef.current = true
-        setSubmitStatus('loading')
-        setAnnouncement('جاري معاينة الإرسال')
+    submittingRef.current = true
+    setSubmitStatus('loading')
+    setAnnouncement(
+        isResend
+            ? 'جاري إعادة إرسال رابط الاستعادة'
+            : 'جاري إرسال رابط الاستعادة'
+    )
 
-        // BACKEND: Replace the preview timers with the forgot-password request for this email and use the API response to drive success/error states.
-        const loadingTimer = setTimeout(() => {
-            setSubmitStatus('check')
+    try {
+        await forgotPassword(email)
 
-            const successTimer = setTimeout(() => {
-                setSubmitStatus('success')
-                setShowSuccess(true)
-                setCooldown(30)
-                submittingRef.current = false
+        setSubmitStatus('success')
+        setShowSuccess(true)
+        setCooldown(30)
 
-                setAnnouncement(
-                    isResend
-                        ? 'اكتملت معاينة إعادة الإرسال، لم يتم إرسال بريد فعلي.'
-                        : 'اكتملت المعاينة، لم يتم إرسال بريد فعلي.'
-                )
+        setAnnouncement(
+            isResend
+                ? 'تم طلب إعادة إرسال رابط الاستعادة'
+                : 'تم طلب إرسال رابط الاستعادة'
+        )
+    } catch (error) {
+        setSubmitStatus('idle')
 
-                timersRef.current = []
-            }, 700)
-
-            timersRef.current.push(successTimer)
-        }, 1500)
-
-        timersRef.current.push(loadingTimer)
+        setAnnouncement(
+            error.message || 'تعذّر إرسال رابط الاستعادة'
+        )
+    } finally {
+        submittingRef.current = false
     }
+}
 
     function handleSubmit(event) {
         event.preventDefault()

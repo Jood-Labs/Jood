@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { clearSession } from '../services/api'
+import {
+    getProfile,
+    updateProfile,
+} from '../services/profileApi'
 import {
     ArrowLeft,
     Bookmark,
@@ -17,26 +22,12 @@ import {
     secondaryButton,
 } from '../components/recipe/recipeStyles'
 
-const profileKey = 'jood-profile-draft'
+
 
 const inputClass =
     'min-h-12 w-full min-w-0 rounded-xl border border-jood-green/20 bg-jood-background/50 px-4 py-3 text-base text-jood-green placeholder:text-jood-green/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
 
-function readProfile() {
-    // BACKEND: Replace this local profile read with the authenticated current-user/profile endpoint.
-    try {
-        const stored = JSON.parse(
-            localStorage.getItem(profileKey) || '{}'
-        )
 
-        return {
-            name: typeof stored?.name === 'string' ? stored.name : '',
-            email: typeof stored?.email === 'string' ? stored.email : '',
-        }
-    } catch {
-        return { name: '', email: '' }
-    }
-}
 
 const shortcuts = [
     {
@@ -66,12 +57,18 @@ const shortcuts = [
 ]
 
 export default function Account() {
-    const [savedProfile, setSavedProfile] = useState(readProfile)
-    const [name, setName] = useState(savedProfile.name)
-    const [email, setEmail] = useState(savedProfile.email)
-    const [message, setMessage] = useState('')
-    const [error, setError] = useState('')
-    const [saved, setSaved] = useState(false)
+    const navigate = useNavigate()
+    const [savedProfile, setSavedProfile] = useState({
+    name: '',
+    email: '',
+})
+
+const [name, setName] = useState('')
+const [email, setEmail] = useState('')
+const [message, setMessage] = useState('')
+const [error, setError] = useState('')
+const [saved, setSaved] = useState(false)
+const [loading, setLoading] = useState(true)
 
     const timerRef = useRef(null)
 
@@ -79,9 +76,36 @@ export default function Account() {
         return () => window.clearTimeout(timerRef.current)
     }, [])
 
+    useEffect(() => {
+    async function loadProfile() {
+        try {
+            const data = await getProfile()
+
+            const profile = data.profile || data
+
+            const nextProfile = {
+                name: profile.name || '',
+                email: profile.email || '',
+            }
+
+            setSavedProfile(nextProfile)
+            setName(nextProfile.name)
+            setEmail(nextProfile.email)
+        } catch (error) {
+            setError(
+                error.message ||
+                'تعذّر تحميل بيانات الحساب.'
+            )
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    loadProfile()
+}, [])
+
     const changed =
-        name.trim() !== savedProfile.name ||
-        email.trim() !== savedProfile.email
+    name.trim() !== savedProfile.name
 
     function clearFeedback() {
         setMessage('')
@@ -90,44 +114,51 @@ export default function Account() {
         window.clearTimeout(timerRef.current)
     }
 
-    function handleSave(event) {
-        event.preventDefault()
+    async function handleSave(event) {
+    event.preventDefault()
 
-        const nextProfile = {
-            name: name.trim().replace(/\s+/g, ' '),
-            email: email.trim(),
-        }
+    const nextName = name.trim().replace(/\s+/g, ' ')
 
-        if (!nextProfile.name) {
-            setError('اكتب اسمك أول')
-            return
-        }
-
-        try {
-            // BACKEND: Replace localStorage with the authenticated profile update endpoint.
-            localStorage.setItem(
-                profileKey,
-                JSON.stringify(nextProfile)
-            )
-
-            setSavedProfile(nextProfile)
-            setName(nextProfile.name)
-            setEmail(nextProfile.email)
-            setError('')
-            setMessage('تم حفظ البيانات على هذا المتصفح')
-            setSaved(true)
-
-            window.clearTimeout(timerRef.current)
-            timerRef.current = window.setTimeout(() => {
-                setSaved(false)
-            }, 2000)
-        } catch {
-            setError('تعذّر حفظ البيانات، جرّب مرة ثانية')
-        }
+    if (!nextName) {
+        setError('اكتب اسمك أول')
+        return
     }
 
-    return (
-        <RecipeLayout>
+    clearFeedback()
+
+    try {
+        await updateProfile(nextName)
+
+        const nextProfile = {
+            ...savedProfile,
+            name: nextName,
+        }
+
+        setSavedProfile(nextProfile)
+        setName(nextName)
+        setError('')
+        setMessage('تم حفظ التعديلات')
+        setSaved(true)
+
+        window.clearTimeout(timerRef.current)
+        timerRef.current = window.setTimeout(() => {
+            setSaved(false)
+        }, 2000)
+    }catch (error) {
+        setError(
+            error.message ||
+            'تعذّر حفظ البيانات، جرّب مرة ثانية'
+        )
+    }
+}
+
+function handleLogout() {
+    clearSession()
+    navigate('/login', { replace: true })
+}
+
+return (
+    <RecipeLayout>
             <div className="flex justify-end">
                 <Link to="/app" className={secondaryButton}>
                     العودة للرئيسية
@@ -215,10 +246,7 @@ export default function Account() {
                             maxLength={254}
                             dir="ltr"
                             value={email}
-                            onChange={(event) => {
-                                setEmail(event.target.value)
-                                clearFeedback()
-                            }}
+                            readOnly
                             placeholder="name@example.com"
                             className={`${inputClass} text-right`}
                         />
@@ -305,14 +333,14 @@ export default function Account() {
 
                     <div className="mt-5 border-t border-jood-green/10 pt-5">
                         {/* BACKEND: Replace the direct login link with a logout request/session clear, then navigate to /login. */}
-                        <Link
-                            to="/login"
-                            replace
-                            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-red-200 bg-white px-5 py-3 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
-                        >
-                            <LogOut size={18} aria-hidden="true" />
-                            تسجيل الخروج
-                        </Link>
+                        <button
+    type="button"
+    onClick={handleLogout}
+    className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-red-200 bg-white px-5 py-3 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+>
+    <LogOut size={18} aria-hidden="true" />
+    تسجيل الخروج
+</button>
                     </div>
                 </section>
             </div>
