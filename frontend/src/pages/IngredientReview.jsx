@@ -356,43 +356,45 @@ export default function IngredientReview() {
     }
 
     function addIngredient(event) {
-        event.preventDefault()
+    event.preventDefault()
 
-        const name = newIngredient.trim().replace(/\s+/g, ' ')
+    const name = newIngredient.trim().replace(/\s+/g, ' ')
 
-        if (!name) {
-            setError('اكتب اسم المكوّن أول')
-            nameInputRef.current?.focus()
-            return
-        }
-
-        const exists = ingredients.some(
-            (item) =>
-                (item.name || '').trim().toLocaleLowerCase() ===
-                name.toLocaleLowerCase()
-        )
-
-        if (exists) {
-            setError('المكوّن موجود في قائمتك')
-            nameInputRef.current?.focus()
-            return
-        }
-
-        const item = {
-    id: nextIdRef.current++,
-    name,
-    source: 'review-manual',
-    expiringSoon: false,
-    expiryMode: '',
-    expiryDate: '',
-    expiryEstimateRecordedOn: '',
-}
-
-        setNewIngredient('')
-        setError('')
-        setAnnouncement(`تمت إضافة ${name}`)
+    if (!name) {
+        setError('اكتب اسم المكوّن أول')
         nameInputRef.current?.focus()
+        return
     }
+
+    const exists = ingredients.some(
+        (item) =>
+            (item.name || '').trim().toLocaleLowerCase() ===
+            name.toLocaleLowerCase()
+    )
+
+    if (exists) {
+        setError('المكوّن موجود في قائمتك')
+        nameInputRef.current?.focus()
+        return
+    }
+
+    const item = {
+        id: nextIdRef.current++,
+        name,
+        source: 'review-manual',
+        expiringSoon: false,
+        expiryMode: '',
+        expiryDate: '',
+        expiryEstimateRecordedOn: '',
+    }
+
+    setIngredients((current) => [...current, item])
+
+    setNewIngredient('')
+    setError('')
+    setAnnouncement(`تمت إضافة ${name}`)
+    nameInputRef.current?.focus()
+}
 
     async function handleImageSelection(event) {
     const file = event.target.files?.[0]
@@ -671,7 +673,7 @@ setImageFile(file)
 
                         {!isDetecting && (
     ingredients.length > 0 ? (
-                            <ul className="mt-4 grid min-w-0 grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            <ul className="mt-4 grid min-w-0 grid-cols-1 items-start gap-3 md:grid-cols-2">
                                 {ingredients.map((item) => (
                                     <li
                                         key={item.id}
@@ -686,18 +688,19 @@ setImageFile(file)
                                             </label>
 
                                             <input
-                                                id={`review-name-${item.id}`}
-                                                type="text"
-                                                value={item.name || ''}
-                                                maxLength={60}
-                                                placeholder="اسم المكوّن"
-                                                onChange={(event) =>
-                                                    updateIngredient(item.id, {
-                                                        name: event.target.value,
-                                                    })
-                                                }
-                                                className={fieldClass}
-                                            />
+    id={`review-name-${item.id}`}
+    type="text"
+    dir="auto"
+    value={item.name || ''}
+    maxLength={60}
+    placeholder="اسم المكوّن"
+    onChange={(event) =>
+        updateIngredient(item.id, {
+            name: event.target.value,
+        })
+    }
+    className={fieldClass}
+/>
                                         </div>
 
                                         <div className="col-start-1 row-start-2 min-w-0 sm:col-start-2 sm:row-start-1 sm:max-w-[260px]">
