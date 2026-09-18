@@ -1,0 +1,1061 @@
+{
+ "48880b78-b430-4968-abbb-5a4980cecbc8.jpg": {
+  "items": [
+   {
+    "ingredient_en": "condensed milk",
+    "ingredient_ar": "حليب مكثف محلى",
+    "brand": "Nestlé",
+    "product_name": "Sweetened Condensed Milk",
+    "visible_text": "Nestlé، حليب مكثف محلى، Sweetened Condensed Milk",
+    "count": 1,
+    "confidence": 0.98
+   },
+   {
+    "ingredient_en": "gelatin dessert",
+    "ingredient_ar": "حلويات الجيلاتين",
+    "brand": "حلواني",
+    "product_name": "حلويات الجيلاتين فراولة",
+    "visible_text": "حلواني، حلويات الجيلاتين فراولة، من ١٠ / جيلاتين، فراولة، حلال",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "red beans",
+    "ingredient_ar": "فاصوليا حمراء",
+    "brand": "مونة",
+    "product_name": "فاصوليا حمراء",
+    "visible_text": "مونة، فاصوليا حمراء",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "tuna",
+    "ingredient_ar": "تونة",
+    "brand": "Goody",
+    "product_name": "Light Meat Tuna in Sunflower Oil",
+    "visible_text": "GOODY ORIGINAL LIGHT MEAT TUNA IN SUNFLOWER OIL 17g PROTEIN",
+    "count": 1,
+    "confidence": 0.98
+   },
+   {
+    "ingredient_en": "cream",
+    "ingredient_ar": "قشطة",
+    "brand": "الإمير",
+    "product_name": "قشطة",
+    "visible_text": "الإمير، قشطة",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 21.5,
+  "tiled": false
+ },
+ "8c17d445-8c1c-4dca-ab9a-b91590f137c6.jpg": {
+  "items": [
+   {
+    "ingredient_en": "peanut butter",
+    "ingredient_ar": "زبدة الفول السوداني",
+    "brand": "Peanut Butter & Co",
+    "product_name": null,
+    "visible_text": "Peanut Butter & Co | زبدة الفول السوداني",
+    "count": 1,
+    "confidence": 0.85
+   },
+   {
+    "ingredient_en": "chia seeds",
+    "ingredient_ar": "بذور الشيا",
+    "brand": "همال",
+    "product_name": null,
+    "visible_text": "بذور الشيا | Chia Seeds",
+    "count": 1,
+    "confidence": 0.7
+   },
+   {
+    "ingredient_en": "cucumber",
+    "ingredient_ar": "خيار",
+    "brand": "Rana",
+    "product_name": "Rana pickles (مخلل)",
+    "visible_text": "Rana | رنا",
+    "count": 1,
+    "confidence": 0.8
+   },
+   {
+    "ingredient_en": "bread",
+    "ingredient_ar": "خبز",
+    "brand": null,
+    "product_name": null,
+    "visible_text": "خبز توست",
+    "count": 1,
+    "confidence": 0.6
+   },
+   {
+    "ingredient_en": "tahini",
+    "ingredient_ar": "طحينة",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.35
+   }
+  ],
+  "sec": 18.0,
+  "tiled": false
+ },
+ "IMG_1213.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون طماطم",
+    "brand": "NADA",
+    "product_name": "Tomato Paste",
+    "visible_text": "NADA ندى معجون طماطم",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "lemon",
+    "ingredient_ar": "ليمون",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "yoghurt",
+    "ingredient_ar": "زبادي",
+    "brand": "Almarai",
+    "product_name": "Fresh Yoghurt",
+    "visible_text": "المراعي Almarai زبادي طازج Fresh Yoghurt FULL FAT",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "cheese",
+    "ingredient_ar": "جبن",
+    "brand": "Almarai",
+    "product_name": "Cheddar Cheese Slices",
+    "visible_text": "المراعي Almarai شيدر Cheddar",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 14.1,
+  "tiled": false
+ },
+ "IMG_1214.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "red beans",
+    "ingredient_ar": "فاصولياء حمراء",
+    "brand": "Panda",
+    "product_name": "فاصولياء حمراء",
+    "visible_text": "Panda بندة فاصولياء حمراء",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "chicken stock",
+    "ingredient_ar": "مرقة الدجاج",
+    "brand": "Maggi",
+    "product_name": "Chicken Stock",
+    "visible_text": "Maggi Chicken Stock مرقة الدجاج",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tuna",
+    "ingredient_ar": "تونة",
+    "brand": "GOODY",
+    "product_name": "تونة خفيفة",
+    "visible_text": "GOODY تونة خفيفة",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "corn",
+    "ingredient_ar": "ذرة",
+    "brand": null,
+    "product_name": "حبوب ذرة",
+    "visible_text": "حبوب ذرة حلوة كاملة",
+    "count": 1,
+    "confidence": 0.85
+   }
+  ],
+  "sec": 25.1,
+  "tiled": false
+ },
+ "IMG_1681.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون طماطم",
+    "brand": "Saudia",
+    "product_name": "معجون الطماطم",
+    "visible_text": "السعودية\nsaudia\nمعجون\nالطماطم",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "oats",
+    "ingredient_ar": "شوفان",
+    "brand": "Quaker",
+    "product_name": "White Oats",
+    "visible_text": "QUAKER\nWHITE OATS\n500g",
+    "count": 1,
+    "confidence": 0.98
+   },
+   {
+    "ingredient_en": "lime",
+    "ingredient_ar": "ليمون",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 10,
+    "confidence": 0.85
+   }
+  ],
+  "sec": 22.7,
+  "tiled": false
+ },
+ "IMG_1685.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "weight gain powder",
+    "ingredient_ar": "مسحوق زيادة الوزن",
+    "brand": "Naturade",
+    "product_name": "Weight Gain",
+    "visible_text": "NATURADE, WEIGHT GAIN, THE NATURALLY FLAVORED, UP TO 1000 CALORIES, NET WT 20.3 oz (1.38 lb) 576 g",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "oat drink",
+    "ingredient_ar": "شراب الشوفان",
+    "brand": "Oatly",
+    "product_name": "Barista Edition Oat Drink",
+    "visible_text": "THE ORIGINAL, OATLY!, BARISTA EDITION, OAT DRINK, 1000 ml",
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "cocoa powder",
+    "ingredient_ar": "مسحوق الكاكاو",
+    "brand": "Panda",
+    "product_name": "Cocoa Powder",
+    "visible_text": "Panda, Cocoa Powder, بودرة الكاكاو",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "chocolate spread",
+    "ingredient_ar": "زبدة الشوكولاتة",
+    "brand": "Ovomaltine",
+    "product_name": "Crunchy Spread",
+    "visible_text": "Ovomaltine, CRUNCHY SPREAD, made in Switzerland",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "sorbet",
+    "ingredient_ar": "سوربيه",
+    "brand": null,
+    "product_name": "Acai Sorbet",
+    "visible_text": "Acai, Sorbet, Original",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 19.1,
+  "tiled": false
+ },
+ "IMG_1686.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "green bell pepper",
+    "ingredient_ar": "فلفل أخضر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "carrot",
+    "ingredient_ar": "جزر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "yogurt",
+    "ingredient_ar": "زبادي",
+    "brand": "Nadec",
+    "product_name": "Greek Yoghurt Low Fat",
+    "visible_text": "GREEK YOGHURT\nLOW FAT\nزبادي يوناني\nnadec\nنادك",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "vermicelli",
+    "ingredient_ar": "شعرية",
+    "brand": "Unifood",
+    "product_name": "الشعرية الوطية",
+    "visible_text": "unifood\nنونفود\nالشعرية الوطية",
+    "count": 1,
+    "confidence": 0.85
+   }
+  ],
+  "sec": 14.4,
+  "tiled": false
+ },
+ "IMG_1687.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "weight gain supplement powder",
+    "ingredient_ar": "مسحوق مكمل لزيادة الوزن",
+    "brand": "Naturade",
+    "product_name": "Weight Gain Naturally Flavored Gainer Vanilla",
+    "visible_text": "NATURADE WEIGHT GAIN NATURALLY FLAVORED GAINER VANILLA NET WT 20.3 OZ (1.3 lb) 576g",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "oat drink",
+    "ingredient_ar": "شراب الشوفان",
+    "brand": "Oatly",
+    "product_name": "Barista Edition Oat Drink",
+    "visible_text": "THE ORIGINAL OAT-LY! BARISTA EDITION OAT DRINK SHAKE ME! Totally Vegan!",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "dark chocolate",
+    "ingredient_ar": "شوكولاتة داكنة",
+    "brand": "Lindt",
+    "product_name": "Excellence 78% Cocoa Smooth Dark",
+    "visible_text": "Lindt EXCELLENCE 78% COCOA SMOOTH DARK 100 g",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "banana",
+    "ingredient_ar": "موز",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "yogurt",
+    "ingredient_ar": "زبادي",
+    "brand": "Al Youm",
+    "product_name": "full-fat yogurt",
+    "visible_text": "اليوم 100g زبادي",
+    "count": 1,
+    "confidence": 0.75
+   }
+  ],
+  "sec": 18.8,
+  "tiled": false
+ },
+ "IMG_1688.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "green bell pepper",
+    "ingredient_ar": "فلفل أخضر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون طماطم",
+    "brand": "Saudia",
+    "product_name": "معجون الطماطم",
+    "visible_text": "السعودية\nsaudia\nمعجون الطماطم\nSAUDI MADE",
+    "count": 1,
+    "confidence": 0.98
+   },
+   {
+    "ingredient_en": "vegetable oil",
+    "ingredient_ar": "زيت نباتي",
+    "brand": "الطيب",
+    "product_name": "زيت",
+    "visible_text": "الطيب, ممتاز",
+    "count": 1,
+    "confidence": 0.7
+   },
+   {
+    "ingredient_en": "banana",
+    "ingredient_ar": "موز",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "carrot",
+    "ingredient_ar": "جزر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "oats",
+    "ingredient_ar": "شوفان",
+    "brand": "Quaker",
+    "product_name": "Oats",
+    "visible_text": "Quaker, OATS",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "labneh",
+    "ingredient_ar": "لبنة",
+    "brand": "President",
+    "product_name": "The Creamy Turkish Labneh",
+    "visible_text": "PRESIDENT\nلبنة\nThe Creamy Turkish Labneh\n100% Cow's milk\nحليب بقر 100%",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tuna",
+    "ingredient_ar": "تونة",
+    "brand": null,
+    "product_name": "تونة",
+    "visible_text": "تونة",
+    "count": 1,
+    "confidence": 0.8
+   }
+  ],
+  "sec": 50.8,
+  "tiled": true
+ },
+ "IMG_1689.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "green bell pepper",
+    "ingredient_ar": "فلفل أخضر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "chicken nuggets",
+    "ingredient_ar": "ناجتس دجاج",
+    "brand": "Al Kabeer",
+    "product_name": "Chicken Nuggets",
+    "visible_text": "Al Kabeer\nChicken Nuggets\nناجتس دجاج\nNON SPICY\nغير حار\nHALAL\nحلال",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "Arabic bread",
+    "ingredient_ar": "خبز عربي",
+    "brand": "Al Hajar Bakery",
+    "product_name": "High Protein Arabic Bread",
+    "visible_text": "High Protein Arabic Bread\nAL HAJAR BAKERY\nخبز عربي بالبروتين",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "vegetable oil",
+    "ingredient_ar": "زيت نباتي",
+    "brand": null,
+    "product_name": null,
+    "visible_text": "لايت",
+    "count": 1,
+    "confidence": 0.6
+   },
+   {
+    "ingredient_en": "lime",
+    "ingredient_ar": "ليمون أخضر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 10,
+    "confidence": 0.8
+   }
+  ],
+  "sec": 24.3,
+  "tiled": false
+ },
+ "IMG_1690.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون طماطم",
+    "brand": "saudia",
+    "product_name": "معجون الطماطم",
+    "visible_text": "saudia\nمعجون الطماطم",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "pickled cucumber",
+    "ingredient_ar": "مخلل خيار",
+    "brand": "Rana",
+    "product_name": "Pickled Cucumber",
+    "visible_text": "Rana\nمخلل خيار\nPickled Cucumber",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tea biscuit",
+    "ingredient_ar": "بسكويت الشاي",
+    "brand": "MEMORIES",
+    "product_name": "Premium Tea Biscuit",
+    "visible_text": "MEMORIES\nPremium Tea Biscuit\nبسكويت الشاي الفاخر",
+    "count": 2,
+    "confidence": 0.85
+   },
+   {
+    "ingredient_en": "carrot",
+    "ingredient_ar": "جزر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "cream",
+    "ingredient_ar": "قشطة",
+    "brand": "nadec",
+    "product_name": "القشطة",
+    "visible_text": "nadec\nالقشطة",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 21.8,
+  "tiled": false
+ },
+ "IMG_1691.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "peanut butter",
+    "ingredient_ar": "زبدة الفول السوداني",
+    "brand": "Peanut Butter & Co.",
+    "product_name": "Smooth Time Peanut Butter",
+    "visible_text": "Peanut Butter & Co. SINCE 1998 YUM! SMOOTH TIME",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "coffee",
+    "ingredient_ar": "قهوة",
+    "brand": "Nescafé",
+    "product_name": "Nescafé Gold",
+    "visible_text": "NESCAFÉ GOLD 100% COFFEE RICH AROMA & SMOOTH TASTE 7",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "biscuits",
+    "ingredient_ar": "بسكويت",
+    "brand": "Memories",
+    "product_name": "Premium Tea Biscuit",
+    "visible_text": "MEMORIES Premium Tea Biscuit سكويت شاي فاخر",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "cream",
+    "ingredient_ar": "قشطة",
+    "brand": "Nadec",
+    "product_name": null,
+    "visible_text": "nadec نادك",
+    "count": 1,
+    "confidence": 0.6
+   }
+  ],
+  "sec": 17.5,
+  "tiled": false
+ },
+ "IMG_1692.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "Arabic bread",
+    "ingredient_ar": "خبز عربي",
+    "brand": "الطيب",
+    "product_name": "High Protein Arabic Bread",
+    "visible_text": "High Protein Arabic Bread\nخبز عربي غني بالبروتين\n14g\n23% of daily value for protein per serving\nEnergy 147 cal\nFat 3.7g\nSaturates 0.6g\nSalt 0.62g\nSugar 0.9g",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون الطماطم",
+    "brand": "Goody",
+    "product_name": "معجون الطماطم",
+    "visible_text": "معجون الطماطم\nGoody",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "carrot",
+    "ingredient_ar": "جزر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "potato",
+    "ingredient_ar": "بطاطس",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "garlic",
+    "ingredient_ar": "ثوم",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 4,
+    "confidence": 0.8
+   }
+  ],
+  "sec": 18.3,
+  "tiled": false
+ },
+ "IMG_1693.HEIC": {
+  "items": [
+   {
+    "ingredient_en": "oat drink",
+    "ingredient_ar": "شراب الشوفان",
+    "brand": "Oatly",
+    "product_name": "The Original Oatly Barista Edition Oat Drink",
+    "visible_text": "THE ORIGINAL OATLY! BARISTA EDITION OAT DRINK SHAKE ME! Totally vegan",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "fresh cream",
+    "ingredient_ar": "قشطة طازجة",
+    "brand": "Almarai",
+    "product_name": "Fresh Cream",
+    "visible_text": "المراعي Almarai قشطة طازجة Fresh Cream",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "cocoa powder",
+    "ingredient_ar": "بودرة الكاكاو",
+    "brand": "Panda",
+    "product_name": "Cocoa Powder",
+    "visible_text": "Panda بودرة الكاكاو Cocoa Powder 125g",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "peanut butter",
+    "ingredient_ar": "زبدة الفول السوداني",
+    "brand": "Peanut Butter & Co.",
+    "product_name": "Peanut Butter",
+    "visible_text": "Peanut Butter & Co. SINCE 1998",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 14.7,
+  "tiled": false
+ },
+ "IMG_7822.JPG": {
+  "items": [
+   {
+    "ingredient_en": "strawberry jam",
+    "ingredient_ar": "مربى الفراولة",
+    "brand": null,
+    "product_name": "Strawberry Jam",
+    "visible_text": "Strawberry Jam مربى الفراولة",
+    "count": 1,
+    "confidence": 0.8
+   },
+   {
+    "ingredient_en": "cucumber",
+    "ingredient_ar": "خيار",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1.0
+   },
+   {
+    "ingredient_en": "honey",
+    "ingredient_ar": "عسل",
+    "brand": "Langnese",
+    "product_name": "Golden Clear Honey",
+    "visible_text": "Langnese GOLDEN CLEAR HONEY 100% Pure Bee Honey SINCE 1927",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "cheese",
+    "ingredient_ar": "جبنة",
+    "brand": "Kraft",
+    "product_name": "جبنة قابلة للدهن",
+    "visible_text": "Kraft جبنة قابلة للدهن",
+    "count": 1,
+    "confidence": 0.8
+   }
+  ],
+  "sec": 17.1,
+  "tiled": false
+ },
+ "IMG_7824.JPG": {
+  "items": [
+   {
+    "ingredient_en": "cheese sauce",
+    "ingredient_ar": "صوص الجبن",
+    "brand": "Heinz",
+    "product_name": "Heinz Cheese Sauce",
+    "visible_text": "HEINZ CHEESE SAUCE EST 1869",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tomato",
+    "ingredient_ar": "طماطم",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "mayonnaise",
+    "ingredient_ar": "مايونيز",
+    "brand": "Goody",
+    "product_name": "Goody Mayonnaise Original",
+    "visible_text": "Goody Mayonnaise ORIGINAL",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "labneh",
+    "ingredient_ar": "لبنة",
+    "brand": "Almarai",
+    "product_name": "Almarai Labneh Full Fat",
+    "visible_text": "Almarai Labneh Full Fat",
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 8.3,
+  "tiled": false
+ },
+ "IMG_7825.JPG": {
+  "items": [
+   {
+    "ingredient_en": "mustard",
+    "ingredient_ar": "خردل",
+    "brand": "Goody",
+    "product_name": "Mustard",
+    "visible_text": "Goody Mustard خردل",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "pesto",
+    "ingredient_ar": "بيستو",
+    "brand": "Goody",
+    "product_name": "Pesto Sauce",
+    "visible_text": "Goody Pesto Sauce صلصة البيستو",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "labneh",
+    "ingredient_ar": "لبنة",
+    "brand": "Almarai",
+    "product_name": "Labneh",
+    "visible_text": "Almarai Labneh لبنة Full Fat Creamy",
+    "count": 2,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "ghee",
+    "ingredient_ar": "سمن",
+    "brand": "Almarai",
+    "product_name": "Ghee",
+    "visible_text": "Almarai المراعي",
+    "count": 1,
+    "confidence": 0.7
+   }
+  ],
+  "sec": 18.2,
+  "tiled": false
+ },
+ "IMG_7827.JPG": {
+  "items": [
+   {
+    "ingredient_en": "biscuit spread",
+    "ingredient_ar": "معجون بسكويت",
+    "brand": "Lotus",
+    "product_name": "Biscoff Crunchy",
+    "visible_text": "Lotus Biscoff CRUNCHY",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "pistachio spread",
+    "ingredient_ar": "معجون فستق",
+    "brand": "Yalova",
+    "product_name": "Pistachio Spread",
+    "visible_text": "Yalova Pistachio Spread",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "cake",
+    "ingredient_ar": "كيك",
+    "brand": "LU",
+    "product_name": "Sarita Chocolate Marble Family Cake",
+    "visible_text": "LU SARITA Chocolate Marble Family Cake",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "tuna",
+    "ingredient_ar": "تونة",
+    "brand": null,
+    "product_name": null,
+    "visible_text": "تونة",
+    "count": 1,
+    "confidence": 0.7
+   }
+  ],
+  "sec": 20.6,
+  "tiled": false
+ },
+ "IMG_7829.JPG": {
+  "items": [
+   {
+    "ingredient_en": "tomato paste",
+    "ingredient_ar": "معجون طماطم",
+    "brand": "Saudia",
+    "product_name": "Tomato Paste",
+    "visible_text": "saudia, معجون الطماطم, TOMATO PASTE",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "instant noodles",
+    "ingredient_ar": "نودلز",
+    "brand": "Indomie",
+    "product_name": "Mi Goreng",
+    "visible_text": "اندومي, Mi Goreng, Noodles",
+    "count": 1,
+    "confidence": 0.9
+   },
+   {
+    "ingredient_en": "fava beans",
+    "ingredient_ar": "فول مدمس",
+    "brand": null,
+    "product_name": null,
+    "visible_text": "فول مدمس",
+    "count": 1,
+    "confidence": 0.7
+   },
+   {
+    "ingredient_en": "lemon",
+    "ingredient_ar": "ليمون",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 1
+   }
+  ],
+  "sec": 13.9,
+  "tiled": false
+ },
+ "cbb8a036-b788-4d1a-bf39-ce851f65866d.jpg": {
+  "items": [
+   {
+    "ingredient_en": "cream cheese",
+    "ingredient_ar": "جبنة كريمي",
+    "brand": "Philadelphia",
+    "product_name": "Light Philadelphia",
+    "visible_text": "Light PHILADELPHIA e 180 g PHILADELPHIA",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "milk",
+    "ingredient_ar": "حليب",
+    "brand": "Almarai",
+    "product_name": "Fresh Milk",
+    "visible_text": "المراعي Almarai حليب طازج كامل الدسم",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "yogurt",
+    "ingredient_ar": "زبادي",
+    "brand": "Almarai",
+    "product_name": "Fresh Yoghurt",
+    "visible_text": "Almarai المراعي Fresh Yoghurt زبادي طازج Full Fat",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "laban",
+    "ingredient_ar": "لبن",
+    "brand": "Almarai",
+    "product_name": "Laban",
+    "visible_text": "المراعي Almarai لبن",
+    "count": 1,
+    "confidence": 0.85
+   }
+  ],
+  "sec": 20.2,
+  "tiled": false
+ },
+ "edf53ec4-a145-4ac3-8bb6-f011e5711ab0.jpg": {
+  "items": [
+   {
+    "ingredient_en": "green bell pepper",
+    "ingredient_ar": "فلفل أخضر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "lemon",
+    "ingredient_ar": "ليمون",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "mayonnaise",
+    "ingredient_ar": "مايونيز",
+    "brand": "Puck",
+    "product_name": "Original",
+    "visible_text": "Puck, Original, المايونيز",
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "carrots",
+    "ingredient_ar": "جزر",
+    "brand": null,
+    "product_name": null,
+    "visible_text": "Carrots, جزر, 0.605",
+    "count": 1,
+    "confidence": 0.99
+   },
+   {
+    "ingredient_en": "cream",
+    "ingredient_ar": "كريمة",
+    "brand": "Almarai",
+    "product_name": "Cream",
+    "visible_text": "Almarai, Cream, كريمة الطهي, 200 مل",
+    "count": 1,
+    "confidence": 0.95
+   }
+  ],
+  "sec": 8.6,
+  "tiled": false
+ },
+ "fbcd877a-1ae5-43ff-8cf8-67c023b32897.jpg": {
+  "items": [
+   {
+    "ingredient_en": "whipped topping mix",
+    "ingredient_ar": "خليط كريمة الخفق",
+    "brand": "Dream Whip",
+    "product_name": "Whipped Topping Mix",
+    "visible_text": "Dream Whip\nWhipped Topping Mix",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "sunflower oil",
+    "ingredient_ar": "زيت عباد الشمس",
+    "brand": "Noor",
+    "product_name": "Sunflower Oil",
+    "visible_text": "NOOR\nSunflower\nنور",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "milk powder",
+    "ingredient_ar": "حليب بودرة",
+    "brand": "Alkhair",
+    "product_name": "Full Cream Milk Powder",
+    "visible_text": "Alkhair\nMILK POWDER\nFull Cream\nالخير",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "pancake mix",
+    "ingredient_ar": "خليط البانكيك",
+    "brand": "Betty Crocker",
+    "product_name": "Pancake Buttermilk",
+    "visible_text": "Betty Crocker\nPancake\nبانكيك\nBUTTERMILK\nزبدة الحليب\njust add\nأضف فقط",
+    "count": 1,
+    "confidence": 0.95
+   },
+   {
+    "ingredient_en": "egg",
+    "ingredient_ar": "بيض",
+    "brand": null,
+    "product_name": null,
+    "visible_text": null,
+    "count": 1,
+    "confidence": 0.9
+   }
+  ],
+  "sec": 18.9,
+  "tiled": false
+ },
+ "_run": {
+  "generated_at": "2026-09-18T05:17:23+00:00",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com",
+  "decoding": {
+   "temperature": 0,
+   "top_p": 1,
+   "seed": "unsupported by this endpoint"
+  },
+  "prompt_sha256": "0f3581548932546e",
+  "pipeline": {
+   "model": "deepseek-flash",
+   "base_url": "https://api.deepseek.com",
+   "max_px": 1300,
+   "crowded_at": 7,
+   "grid": 2,
+   "overlap": 0.15,
+   "weak_below": 0.6,
+   "workers": 6,
+   "tile_workers": 4,
+   "max_retries": 4
+  },
+  "images": 22,
+  "python": "3.13.15",
+  "note": "hosted LLMs are not bit-reproducible even at temperature 0; use --runs N and report mean +/- std rather than a single run"
+ }
+}
