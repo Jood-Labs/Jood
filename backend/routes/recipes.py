@@ -160,3 +160,50 @@ async def generate_recipe_suggestions(
             status_code=500,
             detail="Internal server error",
         ) from error
+
+@router.get("/{recipe_id}")
+def get_recipe_by_id(
+    recipe_id: str,
+    current_user=Depends(get_current_user),
+):
+    try:
+        response = (
+            supabase_admin
+            .table("recipes")
+            .select("*")
+            .eq("id", recipe_id)
+            .eq("user_id", str(current_user.id))
+            .execute()
+        )
+
+        if not response.data:
+            raise HTTPException(
+                status_code=404,
+                detail="Recipe not found",
+            )
+
+        recipe = response.data[0]
+
+        recipe["used_count"] = len([
+            ingredient
+            for ingredient in recipe.get("ingredients", [])
+            if ingredient.get("available")
+            and not ingredient.get("staple")
+        ])
+
+        recipe["missing_count"] = len(
+            recipe.get("you_need") or []
+        )
+
+        return {
+            "recipe": recipe
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error",
+        ) from error

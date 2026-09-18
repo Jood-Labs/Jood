@@ -5,7 +5,6 @@ import {
     Bookmark,
     ChefHat,
     Clock3,
-    Flame,
     Leaf,
     UsersRound,
 } from 'lucide-react'
@@ -15,17 +14,24 @@ import {
     primaryButton,
     secondaryButton,
 } from '../components/recipe/recipeStyles'
-import useSavedRecipes from '../hooks/useSavedRecipes'
+import useBookmarks from '../hooks/useBookmarks'
 import { getRecipeSuggestions } from '../services/recipeApi'
 
 export default function Recipes() {
     const location = useLocation()
     const navigationState = location.state
 
-    const { savedIds, toggleSaved, saveMessage } = useSavedRecipes()
+    const {
+        savedIds,
+        savedRecipes,
+        toggleSaved,
+        saveMessage,
+        loading: bookmarksLoading,
+    } = useBookmarks()
 
     const showSavedOnly =
         new URLSearchParams(location.search).get('view') === 'saved'
+
     const [recipes, setRecipes] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -46,13 +52,17 @@ export default function Recipes() {
                     { signal: controller.signal }
                 )
 
-                if (active) setRecipes(result)
+                if (active) {
+                    setRecipes(result)
+                }
             } catch (error) {
                 if (active && error.name !== 'AbortError') {
                     setError('تعذّر تحميل الوصفات')
                 }
             } finally {
-                if (active) setLoading(false)
+                if (active) {
+                    setLoading(false)
+                }
             }
         }
 
@@ -64,28 +74,83 @@ export default function Recipes() {
         }
     }, [navigationState, retry])
 
-    const saved = recipes.filter((recipe) =>
-        savedIds.includes(recipe.id)
-    )
+    /*
+     * الوصفات القادمة من GET /bookmarks/
+     * تكون من جدول recipes مباشرة.
+     *
+     * هنا نوحّد شكلها مع الوصفات التي تستخدمها
+     * واجهة Recipes.
+     */
+const normalizedSavedRecipes = (savedRecipes ?? []).map((recipe) => ({
+        ...recipe,
 
-    const visible = showSavedOnly ? saved : recipes
+        minutes:
+            recipe.minutes ??
+            recipe.time_minutes ??
+            0,
+
+        priorityNames:
+            recipe.priorityNames ??
+            [],
+
+        ingredient_utilization:
+            recipe.ingredient_utilization ??
+            0,
+
+        missing_count:
+            recipe.missing_count ??
+            (
+                Array.isArray(recipe.you_need)
+                    ? recipe.you_need.length
+                    : 0
+            ),
+
+        is_best_match:
+            recipe.is_best_match ??
+            false,
+
+        description:
+            recipe.description ??
+            '',
+    }))
+
+    /*
+     * إذا المستخدم في صفحة المحفوظات:
+     * نعرض الوصفات القادمة من Supabase.
+     *
+     * غير كذا:
+     * نعرض الوصفات المقترحة الحالية.
+     */
+    const visible = showSavedOnly
+        ? normalizedSavedRecipes
+        : recipes
+
+    const pageLoading = showSavedOnly
+        ? bookmarksLoading
+        : loading
 
     return (
         <RecipeLayout navigationState={navigationState}>
             <div className="flex justify-end">
                 <Link
                     to={
-                        showSavedOnly && navigationState?.returnTo === '/account'
+                        showSavedOnly &&
+                        navigationState?.returnTo === '/account'
                             ? '/account'
                             : '/ingredients/review'
                     }
                     state={navigationState}
                     className={secondaryButton}
                 >
-                    {showSavedOnly && navigationState?.returnTo === '/account'
+                    {showSavedOnly &&
+                    navigationState?.returnTo === '/account'
                         ? 'العودة لحسابي'
                         : 'تعديل المكونات'}
-                    <ArrowLeft size={18} aria-hidden="true" />
+
+                    <ArrowLeft
+                        size={18}
+                        aria-hidden="true"
+                    />
                 </Link>
             </div>
 
@@ -98,8 +163,8 @@ export default function Recipes() {
             </p>
 
             <p className="mt-3 text-xs leading-6 text-jood-green/60">
-                وصفات وقيم غذائية تجريبية، الأولوية حسب المكونات اللي
-                حدّدتها قرب تنتهي، والتفضيلات الغذائية غير مطبّقة حاليًا
+                اقتراحات مخصصة حسب مكوناتك ووقتك وتفضيلاتك الغذائية،
+                مع إعطاء أولوية للمكونات اللي حدّدتها قرب تنتهي
             </p>
 
             <div
@@ -110,7 +175,11 @@ export default function Recipes() {
                 <Link
                     to="/recipes"
                     state={navigationState}
-                    aria-current={!showSavedOnly ? 'page' : undefined}
+                    aria-current={
+                        !showSavedOnly
+                            ? 'page'
+                            : undefined
+                    }
                     className={
                         showSavedOnly
                             ? secondaryButton
@@ -123,23 +192,35 @@ export default function Recipes() {
                 <Link
                     to="/recipes?view=saved"
                     state={navigationState}
-                    aria-current={showSavedOnly ? 'page' : undefined}
+                    aria-current={
+                        showSavedOnly
+                            ? 'page'
+                            : undefined
+                    }
                     className={
                         showSavedOnly
                             ? primaryButton
                             : secondaryButton
                     }
                 >
-                    <Bookmark size={18} aria-hidden="true" />
-                    المحفوظات ({saved.length})
+                    <Bookmark
+                        size={18}
+                        aria-hidden="true"
+                    />
+
+                    المحفوظات ({savedIds.length})
                 </Link>
             </div>
 
-            <p role="status" aria-atomic="true" className="mt-3 text-sm">
+            <p
+                role="status"
+                aria-atomic="true"
+                className="mt-3 text-sm"
+            >
                 {saveMessage}
             </p>
 
-            {loading && (
+            {pageLoading && (
                 <div
                     role="status"
                     className="mt-6 rounded-3xl bg-white p-8 text-center"
@@ -155,7 +236,7 @@ export default function Recipes() {
                 </div>
             )}
 
-            {error && (
+            {error && !showSavedOnly && (
                 <div
                     role="alert"
                     className="mt-6 rounded-3xl bg-white p-8 text-center"
@@ -164,7 +245,9 @@ export default function Recipes() {
 
                     <button
                         type="button"
-                        onClick={() => setRetry((value) => value + 1)}
+                        onClick={() =>
+                            setRetry((value) => value + 1)
+                        }
                         className={`${primaryButton} mt-4`}
                     >
                         حاول مرة ثانية
@@ -172,64 +255,65 @@ export default function Recipes() {
                 </div>
             )}
 
-            {!loading && !error && visible.length === 0 && (
-                <div className="mt-6 rounded-3xl bg-white p-8 text-center">
-                    <Bookmark
-                        size={32}
-                        aria-hidden="true"
-                        className="mx-auto text-jood-green/50"
-                    />
+            {!pageLoading &&
+                !(error && !showSavedOnly) &&
+                visible.length === 0 && (
+                    <div className="mt-6 rounded-3xl bg-white p-8 text-center">
+                        <Bookmark
+                            size={32}
+                            aria-hidden="true"
+                            className="mx-auto text-jood-green/50"
+                        />
 
-                    <h2 className="stylistic-text mt-4 text-xl font-bold">
-                        {showSavedOnly
-                            ? 'ما حفظت وصفات لسه'
-                            : 'ما لقينا وصفات'}
-                    </h2>
+                        <h2 className="stylistic-text mt-4 text-xl font-bold">
+                            {showSavedOnly
+                                ? 'ما حفظت وصفات لسه'
+                                : 'ما لقينا وصفات'}
+                        </h2>
 
-                    <p className="mt-2 text-sm leading-7 text-jood-green/70">
-                        {showSavedOnly
-                            ? 'اضغط علامة الحفظ على الوصفة عشان ترجع لها بسهولة'
-                            : 'جرّب تعدّل المكونات وتطلب الوصفات مرة ثانية'}
-                    </p>
+                        <p className="mt-2 text-sm leading-7 text-jood-green/70">
+                            {showSavedOnly
+                                ? 'اضغط علامة الحفظ على الوصفة عشان ترجع لها بسهولة'
+                                : 'جرّب تعدّل المكونات وتطلب الوصفات مرة ثانية'}
+                        </p>
 
-                    {showSavedOnly ? (
-                        <Link
-                            to="/recipes"
-                            state={navigationState}
-                            className={`${primaryButton} mt-5`}
-                        >
-                            استكشف الوصفات
-                        </Link>
-                    ) : (
-                        <Link
-                            to={
-                                showSavedOnly && navigationState?.returnTo === '/account'
-                                    ? '/account'
-                                    : '/ingredients/review'
-                            }
-                            state={navigationState}
-                            className={`${secondaryButton} mt-5`}
-                        >
-                            {showSavedOnly && navigationState?.returnTo === '/account'
-                                ? 'العودة لحسابي'
-                                : 'تعديل المكونات'}
-                        </Link>
-                    )}
-                </div>
-            )}
+                        {showSavedOnly ? (
+                            <Link
+                                to="/recipes"
+                                state={navigationState}
+                                className={`${primaryButton} mt-5`}
+                            >
+                                استكشف الوصفات
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/ingredients/review"
+                                state={navigationState}
+                                className={`${secondaryButton} mt-5`}
+                            >
+                                تعديل المكونات
+                            </Link>
+                        )}
+                    </div>
+                )}
 
             <div className="mt-6 grid min-w-0 grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {visible.map((recipe) => {
-                    const isSaved = savedIds.includes(recipe.id)
-                    const priority = recipe.priorityNames.length > 0
+                    const isSaved =
+                        savedIds.includes(recipe.id)
+
+                    const priority =
+                        Array.isArray(recipe.priorityNames) &&
+                        recipe.priorityNames.length > 0
 
                     return (
                         <article
                             key={recipe.id}
-                            className={`flex min-w-0 flex-col overflow-hidden rounded-3xl bg-white ${priority
+                            className={`flex min-w-0 flex-col overflow-hidden rounded-3xl bg-white ${
+                                priority
                                     ? 'ring-2 ring-jood-green/40'
                                     : ''
-                                }`}
+                            }`}
                         >
                             <div className="relative flex h-36 items-center justify-center bg-jood-lime/65">
                                 <div className="flex size-20 items-center justify-center rounded-full bg-white/65">
@@ -242,7 +326,9 @@ export default function Recipes() {
 
                                 <button
                                     type="button"
-                                    onClick={() => toggleSaved(recipe)}
+                                    onClick={() =>
+                                        toggleSaved(recipe)
+                                    }
                                     aria-label={`حفظ وصفة ${recipe.name}`}
                                     aria-pressed={isSaved}
                                     className="absolute left-3 top-3 flex size-11 items-center justify-center rounded-full bg-white transition-colors hover:bg-jood-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
@@ -264,6 +350,7 @@ export default function Recipes() {
                                             size={14}
                                             aria-hidden="true"
                                         />
+
                                         لها أولوية
                                     </span>
                                 )}
@@ -274,15 +361,9 @@ export default function Recipes() {
                                     {recipe.name}
                                 </h2>
 
-                                <p className="mt-2 text-sm leading-7 text-jood-green/70">
-                                    {recipe.description}
-                                </p>
-
-                                {priority && (
-                                    <p className="mt-3 rounded-xl bg-jood-lime/40 px-3 py-2 text-xs leading-6">
-                                        تستخدم{' '}
-                                        {recipe.priorityNames.join('، ')}{' '}
-                                        اللي حدّدتها قرب تنتهي
+                                {recipe.description && (
+                                    <p className="mt-2 text-sm leading-7 text-jood-green/70">
+                                        {recipe.description}
                                     </p>
                                 )}
 
@@ -292,6 +373,7 @@ export default function Recipes() {
                                             size={16}
                                             aria-hidden="true"
                                         />
+
                                         {recipe.minutes} دقيقة
                                     </span>
 
@@ -300,15 +382,27 @@ export default function Recipes() {
                                             size={16}
                                             aria-hidden="true"
                                         />
+
                                         {recipe.servings} حصص
                                     </span>
+                                </div>
 
-                                    <span className="inline-flex items-center gap-1">
-                                        <Flame
-                                            size={16}
-                                            aria-hidden="true"
-                                        />
-                                        {recipe.nutrition.calories} سعرة للحصة
+                                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                                    {recipe.is_best_match && (
+                                        <span className="rounded-full bg-jood-green px-3 py-1.5 font-medium text-white">
+                                            أفضل تطابق
+                                        </span>
+                                    )}
+
+                                    <span className="rounded-full bg-jood-lime/60 px-3 py-1.5">
+                                        استفادة من مكوناتك{' '}
+                                        {recipe.ingredient_utilization}%
+                                    </span>
+
+                                    <span className="rounded-full bg-jood-background px-3 py-1.5">
+                                        {recipe.missing_count === 0
+                                            ? 'ما تحتاج مكونات إضافية'
+                                            : `${recipe.missing_count} مكونات ناقصة`}
                                     </span>
                                 </div>
 

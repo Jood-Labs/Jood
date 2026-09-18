@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from services.supabase_client import supabase_admin
 from dependencies.auth import get_current_user
 
@@ -9,17 +9,19 @@ router = APIRouter(
     tags=["Shopping List"]
 )
 
+
 class ShoppingListItemUpdate(BaseModel):
     quantity: str | None = None
+    cart_quantity: int | None = Field(default=None, ge=1)
     is_selected: bool | None = None
 
+# Add missing ingredients from a recipe to the shopping list
 @router.post("/from-recipe/{recipe_id}")
 def add_missing_ingredients_from_recipe(
     recipe_id: str,
     current_user=Depends(get_current_user)
 ):
     try:
-        # 1. Get the recipe and make sure it belongs to the logged-in user
         recipe_response = (
             supabase_admin
             .table("recipes")
@@ -38,26 +40,49 @@ def add_missing_ingredients_from_recipe(
         recipe = recipe_response.data[0]
         missing_ingredients = recipe["you_need"] or []
 
-        # 2. If the recipe has no missing ingredients
         if not missing_ingredients:
             return {
                 "message": "This recipe has no missing ingredients",
                 "items": []
             }
 
-        # 3. Prepare missing ingredients for the shopping list
+        existing_response = (
+            supabase_admin
+            .table("shopping_list_items")
+            .select("ingredient_key")
+            .eq("user_id", str(current_user.id))
+            .execute()
+        )
+
+        existing_keys = {
+            item["ingredient_key"]
+            for item in existing_response.data
+            if item.get("ingredient_key")
+        }
+
         items_to_add = []
 
         for ingredient in missing_ingredients:
+            ingredient_key = ingredient["reference"]
+
+            if ingredient_key in existing_keys:
+                continue
+
             items_to_add.append({
                 "user_id": str(current_user.id),
                 "recipe_id": recipe_id,
                 "name": ingredient["name"],
+                "ingredient_key": ingredient_key,
                 "quantity": ingredient["quantity"],
                 "is_selected": True
             })
 
-        # 4. Save them in Supabase
+        if not items_to_add:
+            return {
+                "message": "Missing ingredients are already in the shopping list",
+                "items": []
+            }
+
         insert_response = (
             supabase_admin
             .table("shopping_list_items")
@@ -65,7 +90,6 @@ def add_missing_ingredients_from_recipe(
             .execute()
         )
 
-        # 5. Return the added items
         return {
             "message": "Missing ingredients added to shopping list",
             "items": insert_response.data
@@ -80,6 +104,8 @@ def add_missing_ingredients_from_recipe(
             detail=str(e)
         )
 
+
+# Get the logged-in user's shopping list
 @router.get("/")
 def get_shopping_list(
     current_user=Depends(get_current_user)
@@ -104,6 +130,8 @@ def get_shopping_list(
             detail=str(e)
         )
 
+
+# Update quantity or selection status
 @router.put("/{item_id}")
 def update_shopping_list_item(
     item_id: str,
@@ -115,6 +143,9 @@ def update_shopping_list_item(
 
         if update.quantity is not None:
             update_data["quantity"] = update.quantity
+
+        if update.cart_quantity is not None:
+            update_data["cart_quantity"] = update.cart_quantity
 
         if update.is_selected is not None:
             update_data["is_selected"] = update.is_selected
@@ -154,13 +185,40 @@ def update_shopping_list_item(
             detail=str(e)
         )
 
+
+# Clear the entire shopping list
+# IMPORTANT: This route must stay before /{item_id}
+@router.delete("/clear")
+def clear_shopping_list(
+    current_user=Depends(get_current_user)
+):
+    try:
+        (
+            supabase_admin
+            .table("shopping_list_items")
+            .delete()
+            .eq("user_id", str(current_user.id))
+            .execute()
+        )
+
+        return {
+            "message": "Shopping list cleared successfully"
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+
+
+# Delete one shopping list item
 @router.delete("/{item_id}")
 def delete_shopping_list_item(
     item_id: str,
     current_user=Depends(get_current_user)
 ):
     try:
-        # Check that the item belongs to the logged-in user
         existing_item = (
             supabase_admin
             .table("shopping_list_items")
@@ -176,7 +234,6 @@ def delete_shopping_list_item(
                 detail="Shopping list item not found"
             )
 
-        # Delete the item
         (
             supabase_admin
             .table("shopping_list_items")

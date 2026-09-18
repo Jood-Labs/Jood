@@ -18,7 +18,7 @@ import {
     primaryButton,
     secondaryButton,
 } from '../components/recipe/recipeStyles'
-import useSavedRecipes from '../hooks/useSavedRecipes'
+import useBookmarks from '../hooks/useBookmarks'
 import { getRecipeById } from '../services/recipeApi'
 
 function formatTime(seconds) {
@@ -278,13 +278,12 @@ function DetailsContent({ recipe, navigationState }) {
     const [cooking, setCooking] = useState(false)
     const startButtonRef = useRef(null)
 
-    const { savedIds, toggleSaved, saveMessage } = useSavedRecipes()
+    const { savedIds, toggleSaved, saveMessage } = useBookmarks()
     const isSaved = savedIds.includes(recipe.id)
 
     const tabs = [
         { id: 'ingredients', label: 'المقادير' },
         { id: 'steps', label: 'طريقة التحضير' },
-        { id: 'nutrition', label: 'المعلومات الغذائية' },
     ]
 
     function exitCooking() {
@@ -460,57 +459,6 @@ function DetailsContent({ recipe, navigationState }) {
                                                 </li>
                                             ))}
                                         </ol>
-                                    )}
-
-                                    {tab.id === 'nutrition' && (
-                                        <>
-                                            <p className="mb-4 text-sm text-jood-green/70">
-                                                قيم توضيحية للحصة الواحدة
-                                            </p>
-
-                                            <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                                {[
-                                                    [
-                                                        'السعرات',
-                                                        `${recipe.nutrition.calories} سعرة`,
-                                                    ],
-                                                    [
-                                                        'البروتين',
-                                                        `${recipe.nutrition.protein} غ`,
-                                                    ],
-                                                    [
-                                                        'الكربوهيدرات',
-                                                        `${recipe.nutrition.carbs} غ`,
-                                                    ],
-                                                    [
-                                                        'الدهون',
-                                                        `${recipe.nutrition.fat} غ`,
-                                                    ],
-                                                    [
-                                                        'الألياف',
-                                                        `${recipe.nutrition.fiber} غ`,
-                                                    ],
-                                                ].map(([label, value]) => (
-                                                    <div
-                                                        key={label}
-                                                        className="rounded-2xl bg-jood-background p-4"
-                                                    >
-                                                        <dt className="text-xs text-jood-green/65">
-                                                            {label}
-                                                        </dt>
-
-                                                        <dd className="mt-2 text-lg font-bold">
-                                                            {value}
-                                                        </dd>
-                                                    </div>
-                                                ))}
-                                            </dl>
-
-                                            <p className="mt-4 text-xs leading-6 text-jood-green/60">
-                                                أرقام تجريبية للتصميم وليست
-                                                حسابًا غذائيًا لهذه الوصفة
-                                            </p>
-                                        </>
                                     )}
                                 </div>
                             ))}

@@ -1,25 +1,38 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import { login } from '../../services/authApi'
 import logo from '../../assets/images/jood.svg'
 import ForgotPasswordDialog from '../../components/auth/ForgotPasswordDialog'
 
 export default function Login() {
+    const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(false)
     const [message, setMessage] = useState('')
     const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    function handleSubmit(event) {
-        event.preventDefault()
+    async function handleSubmit(event) {
+    event.preventDefault()
 
-        // BACKEND: Authenticate with email/password here, persist the server session/token using the chosen auth strategy, then navigate to /app on success.
+    setMessage('')
+    setLoading(true)
+
+    try {
+        await login(email, password, rememberMe)
+
+        navigate('/app')
+    } catch (error) {
         setMessage(
-            'تسجيل الدخول غير متاح حاليًا، نعمل على تجهيز الخدمة.'
+            error.message || 'تعذّر تسجيل الدخول'
         )
+    } finally {
+        setLoading(false)
     }
+}
 
     function handleForgotPassword() {
         setMessage('')
@@ -172,9 +185,10 @@ export default function Login() {
 
                         <button
                             type="submit"
-                            className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
-                        >
-                            تسجيل الدخول
+                            disabled={loading}
+                            className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+                           >              
+                            {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                         </button>
 
                         <p

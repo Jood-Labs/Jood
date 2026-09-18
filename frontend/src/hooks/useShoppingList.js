@@ -1,142 +1,180 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-const storageKey = 'jood-shopping-list'
-const updateEvent = 'jood-shopping-updated'
-
-function readList() {
-    // BACKEND: Replace localStorage with the authenticated user's shopping-list endpoint if the list should persist across devices.
-    try {
-        const value = JSON.parse(
-            localStorage.getItem(storageKey) || '[]'
-        )
-
-        return Array.isArray(value)
-            ? value.filter(
-                  (item) =>
-                      item &&
-                      typeof item.id === 'string' &&
-                      typeof item.name === 'string'
-              )
-            : []
-    } catch {
-        return []
-    }
-}
-
-function itemId(recipeId, ingredientName) {
-    return JSON.stringify([String(recipeId), ingredientName])
-}
+import {
+    addRecipeMissingIngredients,
+    clearShoppingList,
+    deleteShoppingListItem,
+    getShoppingList,
+    updateShoppingListItem,
+} from '../services/shoppingListApi'
 
 export default function useShoppingList() {
-    const [items, setItems] = useState(readList)
+    const [items, setItems] = useState([])
     const [message, setMessage] = useState('')
+    const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        function sync() {
-            setItems(readList())
-        }
+    const loadShoppingList = useCallback(async () => {
+        try {
+            const data = await getShoppingList()
 
-        window.addEventListener('storage', sync)
-        window.addEventListener(updateEvent, sync)
+            const list = Array.isArray(data)
+                ? data
+                : data.items || []
 
-        return () => {
-            window.removeEventListener('storage', sync)
-            window.removeEventListener(updateEvent, sync)
+            setItems(
+                list.map((item) => ({
+                    ...item,
+                    checked: !item.is_selected,
+                }))
+            )
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر تحميل قائمة التسوق'
+            )
+        } finally {
+            setLoading(false)
         }
     }, [])
 
-    function save(next, successMessage = '') {
-        // BACKEND: Persist shopping-list mutations through the API and update local state from the server response.
+    useEffect(() => {
+        loadShoppingList()
+    }, [loadShoppingList])
+
+    function contains(ingredientKey) {
+    if (!ingredientKey) return false
+
+    return items.some(
+        (item) =>
+            item.ingredient_key
+                ?.toLowerCase()
+                .trim() ===
+            ingredientKey
+                .toLowerCase()
+                .trim()
+    )
+}
+
+    async function addIngredients(recipe) {
         try {
-            localStorage.setItem(storageKey, JSON.stringify(next))
-            setItems(next)
-            setMessage(successMessage)
-            window.dispatchEvent(new Event(updateEvent))
-            return true
-        } catch {
-            setMessage('تعذّر حفظ التغيير على المتصفح')
-            return false
+            await addRecipeMissingIngredients(recipe.id)
+
+            await loadShoppingList()
+
+            setMessage(
+                'تمت إضافة المكونات الناقصة لقائمة التسوق'
+            )
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر إضافة المكونات'
+            )
         }
     }
 
-    function contains(recipeId, ingredientName) {
-        return items.some(
-            (item) => item.id === itemId(recipeId, ingredientName)
+    async function updateCartQuantity(id, cartQuantity) {
+    if (cartQuantity < 1) return
+
+    try {
+        await updateShoppingListItem(id, {
+            cart_quantity: cartQuantity,
+        })
+
+        await loadShoppingList()
+    } catch (error) {
+        setMessage(
+            error.message ||
+            'تعذّر تحديث عدد المنتجات'
         )
     }
+}
 
-    function addIngredients(recipe, ingredients) {
-        const current = readList()
+    async function toggleChecked(id) {
+        const item = items.find(
+            (currentItem) => currentItem.id === id
+        )
 
-        const additions = ingredients
-            .filter(
-                (ingredient) =>
-                    !current.some(
-                        (item) =>
-                            item.id ===
-                            itemId(recipe.id, ingredient.name)
-                    )
+        if (!item) return
+
+        try {
+            await updateShoppingListItem(id, {
+                is_selected: item.checked,
+            })
+
+            await loadShoppingList()
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر تحديث المكوّن'
             )
-            .map((ingredient) => ({
-                id: itemId(recipe.id, ingredient.name),
-                name: ingredient.name,
-                quantity: ingredient.quantity || '',
-                recipeId: String(recipe.id),
-                recipeName: recipe.name,
-                checked: false,
-            }))
-
-        if (additions.length === 0) {
-            setMessage('المكونات موجودة في قائمة التسوق')
-            return
         }
-
-        save(
-            [...current, ...additions],
-            'تمت إضافة المكونات لقائمة التسوق'
-        )
     }
 
-    function updateQuantity(id, quantity) {
-        save(
-            readList().map((item) =>
-                item.id === id ? { ...item, quantity } : item
+    async function removeItem(id) {
+        try {
+            await deleteShoppingListItem(id)
+
+            await loadShoppingList()
+
+            setMessage('تم حذف المكوّن')
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر حذف المكوّن'
             )
-        )
+        }
     }
 
-    function toggleChecked(id) {
-        save(
-            readList().map((item) =>
-                item.id === id
-                    ? { ...item, checked: !item.checked }
-                    : item
+    async function clearChecked() {
+        const checkedItems = items.filter(
+            (item) => item.checked
+        )
+
+        try {
+            await Promise.all(
+                checkedItems.map((item) =>
+                    deleteShoppingListItem(item.id)
+                )
             )
-        )
+
+            await loadShoppingList()
+
+            setMessage(
+                'تم حذف المكونات اللي توفّرت'
+            )
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر حذف المكونات'
+            )
+        }
     }
 
-    function removeItem(id) {
-        save(
-            readList().filter((item) => item.id !== id),
-            'تم حذف المكوّن'
-        )
-    }
+    async function clearAll() {
+        try {
+            await clearShoppingList()
 
-    function clearChecked() {
-        save(
-            readList().filter((item) => !item.checked),
-            'تم حذف المكونات اللي توفّرت'
-        )
+            await loadShoppingList()
+
+            setMessage('تم مسح قائمة التسوق')
+        } catch (error) {
+            setMessage(
+                error.message ||
+                'تعذّر مسح قائمة التسوق'
+            )
+        }
     }
 
     return {
         items,
         message,
+        loading,
         contains,
         addIngredients,
-        updateQuantity,
+        updateCartQuantity,
         toggleChecked,
         removeItem,
         clearChecked,
+        clearAll,
     }
 }

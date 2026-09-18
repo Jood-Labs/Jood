@@ -50,7 +50,7 @@ src/
 │   ├── preferences/
 │   └── recipe/
 ├── hooks/
-│   ├── useSavedRecipes.js
+│   ├── useBookmarks.js
 │   └── useShoppingList.js
 ├── pages/
 │   ├── auth/
@@ -461,7 +461,7 @@ GET /recipes/:recipeId
 Current hook:
 
 ```text
-src/hooks/useSavedRecipes.js
+src/hooks/useBookmarks.js
 ```
 
 Saved recipe IDs are temporarily stored in `localStorage` under:

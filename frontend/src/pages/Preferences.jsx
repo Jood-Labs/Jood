@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, X } from 'lucide-react'
+import { getPreferences, savePreferences } from '../services/preferencesApi'
 import PreferenceOptions from '../components/preferences/PreferenceOptions'
+
 
 const dietOptions = [
   {
@@ -48,43 +50,6 @@ const cuisineOptions = [
   { value: 'levantine', label: 'شامي' },
   { value: 'asian', label: 'آسيوي' },
 ]
-
-function readPreferences() {
-  // BACKEND: Load the authenticated user's saved preferences from the API instead of sessionStorage.
-  const defaults = {
-    diet: 'none',
-    allergies: [],
-    dislikedIngredients: [],
-    cuisines: [],
-  }
-
-  try {
-    const saved = JSON.parse(
-      sessionStorage.getItem('jood-preferences') || 'null'
-    )
-
-    if (!saved || typeof saved !== 'object') return defaults
-
-    function readList(value) {
-      return Array.isArray(value)
-        ? [...new Set(value.filter(
-            (item) => typeof item === 'string' && item.trim()
-          ))]
-        : []
-    }
-
-    return {
-      diet: dietOptions.some((option) => option.value === saved.diet)
-        ? saved.diet
-        : defaults.diet,
-      allergies: readList(saved.allergies),
-      dislikedIngredients: readList(saved.dislikedIngredients),
-      cuisines: readList(saved.cuisines),
-    }
-  } catch {
-    return defaults
-  }
-}
 
 function SelectedPreferences({
   name,
@@ -295,9 +260,45 @@ export default function Preferences() {
   const navigate = useNavigate()
   const location = useLocation()
   const returnTo = location.state?.returnTo === '/account' ? '/account' : '/app'
-  const [preferences, setPreferences] = useState(readPreferences)
-  const [isEditingDiet, setIsEditingDiet] = useState(false)
-  const [error, setError] = useState('')
+  const [preferences, setPreferences] = useState({
+  diet: 'none',
+  allergies: [],
+  dislikedIngredients: [],
+  cuisines: [],
+})
+
+const [isEditingDiet, setIsEditingDiet] = useState(false)
+const [error, setError] = useState('')
+const [loading, setLoading] = useState(true)
+const [saving, setSaving] = useState(false)
+
+useEffect(() => {
+  async function loadPreferences() {
+    try {
+      const data = await getPreferences()
+      const savedPreferences = data.preferences
+
+      setPreferences({
+        diet:
+          savedPreferences.diet === 'regular'
+            ? 'none'
+            : savedPreferences.diet,
+        allergies: savedPreferences.allergies || [],
+        dislikedIngredients: savedPreferences.dislikes || [],
+        cuisines: savedPreferences.preferred_cuisines || [],
+      })
+    } catch (error) {
+      setError(
+        error.message ||
+        'تعذّر تحميل تفضيلاتك.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  loadPreferences()
+}, [])
 
   const currentDiet = dietOptions.find(
     (option) => option.value === preferences.diet
@@ -311,20 +312,25 @@ export default function Preferences() {
     setError('')
   }
 
-  function handleSave(event) {
-    event.preventDefault()
+ async function handleSave(event) {
+  event.preventDefault()
 
-    try {
-      // BACKEND: Persist the authenticated user's preference changes through the preferences endpoint.
-      sessionStorage.setItem(
-        'jood-preferences',
-        JSON.stringify(preferences)
-      )
-      navigate(returnTo)
-    } catch {
-      setError('تعذّر حفظ التغييرات. حاول مرة ثانية.')
-    }
+  setError('')
+  setSaving(true)
+
+  try {
+    await savePreferences(preferences)
+
+    navigate(returnTo)
+  } catch (error) {
+    setError(
+      error.message ||
+      'تعذّر حفظ التغييرات. حاول مرة ثانية.'
+    )
+  } finally {
+    setSaving(false)
   }
+}
 
   return (
     <div className="min-h-dvh bg-white p-3 sm:p-5">
@@ -429,11 +435,12 @@ export default function Preferences() {
 
             <div className="pt-3 pb-4">
               <button
-                type="submit"
-                className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
-              >
-                حفظ التغييرات
-              </button>
+  type="submit"
+  disabled={saving || loading}
+  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none"
+>
+  {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+</button>
 
               <Link
                 to={returnTo}

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-
+from uuid import UUID
 
 # Input schema
 
@@ -23,18 +23,35 @@ class RecipeGenerationRequest(BaseModel):
 
 class RecipeIngredientResponse(BaseModel):
     name: str
+    reference: str
     quantity: str
     available: bool
     staple: bool
 
 
+class RecipeMatchIngredient(BaseModel):
+    name: str
+    reference: str
+    quantity: str
+
+
 class GeneratedRecipeResponse(BaseModel):
+    id: UUID
     name: str
     servings: int
     time_minutes: int
     ingredients: list[RecipeIngredientResponse]
     instructions: list[str]
-    
+
+    you_have: list[RecipeMatchIngredient]
+    you_need: list[RecipeMatchIngredient]
+
+    used_count: int
+    missing_count: int
+    ingredient_utilization: int
+    priority_used_count: int
+    is_best_match: bool
+
 
 class RecipeGenerationResponse(BaseModel):
     recipes: list[GeneratedRecipeResponse]

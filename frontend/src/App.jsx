@@ -12,70 +12,134 @@ import IngredientReview from './pages/IngredientReview'
 import Recipes from './pages/Recipes'
 import RecipeDetails from './pages/RecipeDetails'
 import ShoppingList from './pages/ShoppingList'
+import Cart from './pages/Cart'
 import Account from './pages/Account'
 import ChangePassword from './pages/ChangePassword'
+import ProtectedRoute from './components/ProtectedRoute'
+
 
 function AppRoutes() {
-    // BACKEND: After authentication is connected, protect app/account routes using the server-backed auth/session state.
     const location = useLocation()
 
     return (
         <PageTransition key={location.key}>
             <Routes location={location}>
-                <Route path="/" element={<Landing />} />
-                <Route path="/app" element={<Home />} />
+                {/* Public routes */}
+                <Route
+                    path="/"
+                    element={<Landing />}
+                />
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
+
+                <Route
+                    path="/signup"
+                    element={<SignUp />}
+                />
 
                 <Route
                     path="/reset-password"
                     element={<ResetPassword />}
                 />
 
+                {/* Protected routes */}
+                <Route
+                    path="/app"
+                    element={
+                        <ProtectedRoute>
+                            <Home />
+                        </ProtectedRoute>
+                    }
+                />
+
                 <Route
                     path="/preferences/setup"
-                    element={<PreferenceSetup />}
+                    element={
+                        <ProtectedRoute>
+                            <PreferenceSetup />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/preferences"
-                    element={<Preferences />}
+                    element={
+                        <ProtectedRoute>
+                            <Preferences />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/ingredients/review"
-                    element={<IngredientReview />}
+                    element={
+                        <ProtectedRoute>
+                            <IngredientReview />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/recipes"
-                    element={<Recipes />}
+                    element={
+                        <ProtectedRoute>
+                            <Recipes />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/recipes/:recipeId"
-                    element={<RecipeDetails />}
+                    element={
+                        <ProtectedRoute>
+                            <RecipeDetails />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/shopping-list"
-                    element={<ShoppingList />}
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingList />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/cart"
+                    element={
+                        <ProtectedRoute>
+                            <Cart />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/account"
-                    element={<Account />}
+                    element={
+                        <ProtectedRoute>
+                            <Account />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
                     path="/account/password"
-                    element={<ChangePassword />}
+                    element={
+                        <ProtectedRoute>
+                            <ChangePassword />
+                        </ProtectedRoute>
+                    }
                 />
             </Routes>
         </PageTransition>
     )
 }
+
 
 export default function App() {
     return (

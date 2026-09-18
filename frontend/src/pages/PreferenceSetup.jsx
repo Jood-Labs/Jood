@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PreferenceOptions from '../components/preferences/PreferenceOptions'
 import logo from '../assets/images/jood.svg'
+import { savePreferences } from '../services/preferencesApi'
 
 const steps = [
     {
@@ -77,6 +78,7 @@ export default function PreferenceSetup() {
         cuisines: [],
     })
     const [error, setError] = useState('')
+    const [saving, setSaving] = useState(false)
 
     function updatePreference(key, value) {
         setPreferences((current) => ({
@@ -96,25 +98,32 @@ export default function PreferenceSetup() {
         })
     }
 
-    function handleSubmit(event) {
-        event.preventDefault()
+async function handleSubmit(event) {
+    event.preventDefault()
 
-        if (step < steps.length - 1) {
-            changeStep(step + 1)
-            return
-        }
-
-        try {
-            // BACKEND: Save the authenticated user's initial preferences through the preferences endpoint.
-            sessionStorage.setItem(
-                'jood-preferences',
-                JSON.stringify(preferences)
-            )
-            navigate('/app')
-        } catch {
-            setError('تعذّر حفظ تفضيلاتك. حاول مرة ثانية.')
-        }
+    if (step < steps.length - 1) {
+        changeStep(step + 1)
+        return
     }
+
+    setError('')
+    setSaving(true)
+
+    try {
+        await savePreferences(preferences)
+
+        navigate('/app', {
+            replace: true,
+        })
+    } catch (error) {
+        setError(
+            error.message ||
+            'تعذّر حفظ تفضيلاتك. حاول مرة ثانية.'
+        )
+    } finally {
+        setSaving(false)
+    }
+}
 
     return (
         <div className="min-h-dvh bg-white p-3 sm:p-5">
@@ -246,12 +255,19 @@ export default function PreferenceSetup() {
                             )}
 
                             <button
-                                type="submit"
-                                className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
-                            >
-                                {step === steps.length - 1 ? 'حفظ وابدأ' : 'التالي'}
-                                <ArrowLeft size={18} aria-hidden="true" />
-                            </button>
+    type="submit"
+    disabled={saving}
+    className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green motion-reduce:transition-none"
+>
+    {saving
+        ? 'جاري الحفظ...'
+        : step === steps.length - 1
+            ? 'حفظ وابدأ'
+            : 'التالي'}
+
+    <ArrowLeft size={18} aria-hidden="true" />
+</button>
+
                         </div>
                     </form>
                 </div>
