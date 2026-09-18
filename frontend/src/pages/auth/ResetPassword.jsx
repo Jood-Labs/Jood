@@ -124,7 +124,7 @@ export default function ResetPassword() {
     'absolute inset-y-0 right-1 my-auto flex size-11 items-center justify-center rounded-lg text-jood-green/70 hover:text-jood-green focus-visible:outline-2 focus-visible:outline-jood-green'
 
   const buttonClassName =
-    'inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none'
+    'jood-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 text-base font-medium text-white transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none'
 
   return (
     <div className="min-h-dvh bg-white p-3 sm:p-5">

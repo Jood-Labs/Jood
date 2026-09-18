@@ -62,7 +62,7 @@ export default function TryJood() {
 
                 <Link
                     to="/login"
-                    className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:w-auto"
+                    className="jood-button mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-8 py-3 text-base font-medium text-white transition-colors duration-200 hover:bg-jood-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:w-auto"
                 >
                     خلّنا نطبخ
                 </Link>

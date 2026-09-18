@@ -107,7 +107,7 @@ export default function IngredientUpload({ file, onFileChange }) {
                 <button
                     type="button"
                     onClick={() => cameraRef.current?.click()}
-                    className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-3 rounded-2xl bg-jood-green px-4 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:min-h-14 sm:px-6"
+                    className="jood-button inline-flex min-h-12 cursor-pointer items-center justify-center gap-3 rounded-2xl bg-jood-green px-4 py-3 text-base font-medium text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:min-h-14 sm:px-6"
                 >
                     <Camera size={22} aria-hidden="true" />
                     {file ? 'أعد التصوير' : 'صوّر المكونات'}
@@ -116,7 +116,7 @@ export default function IngredientUpload({ file, onFileChange }) {
                 <button
                     type="button"
                     onClick={() => galleryRef.current?.click()}
-                    className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-3 rounded-2xl border border-jood-green/20 bg-white px-4 py-3 text-base font-medium text-jood-green transition-colors hover:bg-jood-lime/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:min-h-14 sm:px-6"
+                    className="jood-button inline-flex min-h-12 cursor-pointer items-center justify-center gap-3 rounded-2xl border border-jood-green/20 bg-white px-4 py-3 text-base font-medium text-jood-green transition-colors hover:bg-jood-lime/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-jood-green motion-reduce:transition-none sm:min-h-14 sm:px-6"
                 >
                     <ImagePlus size={22} aria-hidden="true" />
                     {file ? 'غيّر الصورة' : 'اختر صورة'}

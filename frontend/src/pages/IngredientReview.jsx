@@ -2,6 +2,7 @@ import { useId, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
     Camera,
+    CalendarDays,
     Plus,
     Minus,
     X,
@@ -17,11 +18,17 @@ import logo from '../assets/images/jood3.svg'
 const fieldClass =
     'min-h-12 w-full min-w-0 rounded-xl border border-jood-green/20 bg-white px-3 py-3 text-base text-jood-green placeholder:text-jood-green/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
 
+const primaryButton =
+    'jood-button inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-jood-green px-6 py-3 font-medium text-white transition-colors enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
+
+const iconButton =
+    'flex size-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-jood-green/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green'
+
 const expiryOptions = [
     { value: 'today', label: 'اليوم' },
     { value: 'two-days', label: 'خلال يومين' },
     { value: 'week', label: 'خلال أسبوع' },
-    { value: 'date', label: 'أعرف التاريخ' },
+    { value: 'date', label: 'تحديد التاريخ' },
 ]
 
 const timeOptions = [
@@ -31,123 +38,260 @@ const timeOptions = [
     { value: 'any', label: 'بدون تحديد' },
 ]
 
-
 function getLocalDate() {
     const date = new Date()
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
 
-    return `${year}-${month}-${day}`
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+    ].join('-')
+}
+
+function expiryLabel(ingredient) {
+    const mode =
+        ingredient.expiryMode || (ingredient.expiryDate ? 'date' : '')
+
+    const enabled = ingredient.expiringSoon ?? Boolean(mode)
+
+    if (!enabled) return 'إضافة الصلاحية'
+
+    if (mode === 'date' && ingredient.expiryDate) {
+        const date = new Date(`${ingredient.expiryDate}T12:00:00`)
+
+        if (!Number.isNaN(date.getTime())) {
+            return `ينتهي ${new Intl.DateTimeFormat('ar-SA', {
+                calendar: 'gregory',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+            }).format(date)}`
+        }
+    }
+
+    return (
+        expiryOptions.find(
+            (option) => option.value === mode && mode !== 'date'
+        )?.label || 'تحديد الصلاحية'
+    )
 }
 
 function IngredientExpiry({ ingredient, onChange }) {
     const id = useId()
+    const triggerRef = useRef(null)
 
-    const mode =
+    const [isOpen, setIsOpen] = useState(false)
+    const [mode, setMode] = useState('')
+    const [date, setDate] = useState('')
+    const [error, setError] = useState('')
+    const [modeChanged, setModeChanged] = useState(false)
+
+    const savedMode =
         ingredient.expiryMode || (ingredient.expiryDate ? 'date' : '')
 
-    const enabled =
-        ingredient.expiringSoon ?? Boolean(mode)
+    const hasExpiry =
+        ingredient.expiringSoon ?? Boolean(savedMode)
 
-    function toggleEnabled(event) {
+    function openEditor() {
+        setMode(hasExpiry ? savedMode : '')
+        setDate(hasExpiry ? ingredient.expiryDate || '' : '')
+        setModeChanged(false)
+        setError('')
+        setIsOpen(true)
+    }
+
+    function closeEditor() {
+        setIsOpen(false)
+        triggerRef.current?.focus()
+    }
+
+    function saveExpiry(event) {
+        event.preventDefault()
+
+        if (!mode) {
+            setError('اختَر المدة أو حدّد التاريخ')
+            return
+        }
+
+        if (mode === 'date' && !date) {
+            setError('حدّد تاريخ الانتهاء')
+            return
+        }
+
         onChange({
-            expiringSoon: event.target.checked,
+            expiringSoon: true,
+            expiryMode: mode,
+            expiryDate: mode === 'date' ? date : '',
+            expiryEstimateRecordedOn:
+                mode === 'date'
+                    ? ''
+                    : !modeChanged && ingredient.expiryEstimateRecordedOn
+                        ? ingredient.expiryEstimateRecordedOn
+                        : getLocalDate(),
+        })
+
+        closeEditor()
+    }
+
+    function clearExpiry() {
+        onChange({
+            expiringSoon: false,
             expiryMode: '',
             expiryDate: '',
             expiryEstimateRecordedOn: '',
         })
-    }
 
-    function selectMode(value) {
-        onChange({
-            expiringSoon: true,
-            expiryMode: value,
-            expiryDate: '',
-            expiryEstimateRecordedOn:
-                value === 'date' ? '' : getLocalDate(),
-        })
+        closeEditor()
     }
 
     return (
-        <div className="mt-3 min-w-0">
-            <label className="inline-flex min-h-11 cursor-pointer items-center gap-2">
-                <input
-                    type="checkbox"
-                    checked={enabled}
-                    onChange={toggleEnabled}
-                    aria-controls={`${id}-options`}
-                    className="size-4 shrink-0 accent-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
+        <div
+            className="relative"
+            onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                    closeEditor()
+                }
+            }}
+            onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setIsOpen(false)
+                }
+            }}
+        >
+            <button
+                ref={triggerRef}
+                type="button"
+                onClick={openEditor}
+                aria-expanded={isOpen}
+                aria-controls={`${id}-editor`}
+                aria-label={`صلاحية ${ingredient.name || 'المكوّن'}: ${expiryLabel(ingredient)}`}
+                className={`inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-full px-4 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green ${hasExpiry
+                    ? 'bg-jood-lime text-jood-green hover:bg-jood-lime/70'
+                    : 'bg-white text-jood-green/60 hover:bg-jood-green/5'
+                    }`}
+            >
+                <CalendarDays
+                    size={17}
+                    className="shrink-0"
+                    aria-hidden="true"
                 />
+                <span>{expiryLabel(ingredient)}</span>
+            </button>
 
-                <span className="text-sm font-medium">
-                    قرب ينتهي
-                </span>
+            {isOpen && (
+                <div
+                    id={`${id}-editor`}
+                    className="absolute left-0 top-full z-30 mt-1 w-[min(18rem,calc(100vw_-_4rem))] rounded-2xl border border-jood-green/15 bg-white/70 p-4 shadow-xl backdrop-blur-sm"                             >
+                 
+                    <div className="flex items-center justify-between gap-3">
+                        <h2
+                            id={`${id}-title`}
+                            className="stylistic-text text-xl font-bold"
+                        >
+                            صلاحية {ingredient.name || 'المكوّن'}
+                        </h2>
 
-                <span className="text-xs text-jood-green/45">
-                    اختياري
-                </span>
-            </label>
+                        <button
+                            type="button"
+                            onClick={closeEditor}
+                            aria-label="إغلاق"
+                            className={iconButton}
+                        >
+                            <X size={20} aria-hidden="true" />
+                        </button>
+                    </div>
 
-            {enabled && (
-                <div id={`${id}-options`} className="mt-2 min-w-0">
-                    <fieldset className="m-0 min-w-0 border-0 p-0">
-                        <legend className="mb-3 text-sm text-jood-green/75">
-                            قد إيش باقي تقريبًا؟
-                        </legend>
+                    <p
+                        id={`${id}-description`}
+                        className="mt-2 text-sm leading-7 text-jood-green/65"
+                    >
+                        اختَر المدة المتبقية تقريبًا أو التاريخ المكتوب على العبوة
+                    </p>
 
-                        <div className="grid grid-cols-2 gap-2">
-                            {expiryOptions.map((option) => (
+                    <form onSubmit={saveExpiry} className="mt-5">
+                        <fieldset className="min-w-0 border-0 p-0">
+                            <legend className="sr-only">
+                                المدة المتبقية
+                            </legend>
+
+                            <div className="grid grid-cols-2 gap-2">
+                                {expiryOptions.map((option) => (
+                                    <label
+                                        key={option.value}
+                                        className="cursor-pointer"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name={`${id}-mode`}
+                                            value={option.value}
+                                            checked={mode === option.value}
+                                            onChange={() => {
+                                                setMode(option.value)
+                                                setModeChanged(true)
+                                                setError('')
+                                            }}
+                                            className="peer sr-only"
+                                        />
+
+                                        <span className="jood-button flex min-h-12 items-center justify-center rounded-xl border border-jood-green/20 px-3 py-2 text-sm peer-checked:border-jood-green peer-checked:bg-jood-lime peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-jood-green">
+                                            {option.label}
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </fieldset>
+
+                        {mode === 'date' && (
+                            <div className="mt-4 min-w-0">
                                 <label
-                                    key={option.value}
-                                    className="min-w-0 cursor-pointer"
+                                    htmlFor={`${id}-date`}
+                                    className="mb-2 block text-sm"
                                 >
-                                    <input
-                                        type="radio"
-                                        name={`${id}-expiry`}
-                                        value={option.value}
-                                        checked={mode === option.value}
-                                        onChange={() =>
-                                            selectMode(option.value)
-                                        }
-                                        className="peer sr-only"
-                                    />
-
-                                    <span className="flex min-h-11 items-center justify-center rounded-xl border border-jood-green/20 bg-white px-2 py-2 text-center text-sm transition-colors peer-checked:border-jood-green peer-checked:bg-jood-lime peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-jood-green">
-                                        {option.label}
-                                    </span>
+                                    تاريخ الانتهاء
                                 </label>
-                            ))}
-                        </div>
-                    </fieldset>
 
-                    {mode === 'date' && (
-                        <div className="mt-3 w-full min-w-0 max-w-[220px]">
-                            <label
-                                htmlFor={`${id}-date`}
-                                className="mb-2 block text-sm text-jood-green/75"
+                                <input
+                                    id={`${id}-date`}
+                                    type="date"
+                                    dir="ltr"
+                                    required
+                                    value={date}
+                                    onChange={(event) => {
+                                        setDate(event.target.value)
+                                        setError('')
+                                    }}
+                                    data-filled={Boolean(date)}
+                                    className={`${fieldClass} ingredient-date`}
+                                    style={{
+                                        color: date ? '#31572c' : '#aab9a6',
+                                    }}
+                                />
+                            </div>
+                        )}
+
+                        {error && (
+                            <p role="alert" className="mt-3 text-sm text-red-700">
+                                {error}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            className={`${primaryButton} mt-5 w-full`}
+                        >
+                            حفظ
+                        </button>
+
+                        {hasExpiry && (
+                            <button
+                                type="button"
+                                onClick={clearExpiry}
+                                className="mt-2 min-h-11 w-full rounded-full text-sm text-jood-green/65 hover:bg-jood-background"
                             >
-                                التاريخ المكتوب على العبوة
-                            </label>
-
-                            <input
-                                id={`${id}-date`}
-                                type="date"
-                                dir="ltr"
-                                value={ingredient.expiryDate || ''}
-                                data-filled={Boolean(ingredient.expiryDate)}
-                                onChange={(event) =>
-                                    onChange({
-                                        expiringSoon: true,
-                                        expiryMode: 'date',
-                                        expiryDate: event.target.value,
-                                        expiryEstimateRecordedOn: '',
-                                    })
-                                }
-                                className={`${fieldClass} ingredient-date`}
-                            />
-                        </div>
-                    )}
+                                إزالة تحديد الصلاحية
+                            </button>
+                        )}
+                    </form>
                 </div>
             )}
         </div>
@@ -156,9 +300,10 @@ function IngredientExpiry({ ingredient, onChange }) {
 
 export default function IngredientReview() {
     const location = useLocation()
+    const navigate = useNavigate()
+
     const nameInputRef = useRef(null)
     const imageInputRef = useRef(null)
-    const navigate = useNavigate()
 
     const [ingredients, setIngredients] = useState(() =>
         Array.isArray(location.state?.ingredients)
@@ -167,32 +312,25 @@ export default function IngredientReview() {
     )
 
     const nextIdRef = useRef(
-        Math.max(
-            0,
-            ...ingredients.map((item) => Number(item.id) || 0)
-        ) + 1
+        Math.max(0, ...ingredients.map((item) => Number(item.id) || 0)) + 1
     )
 
     const [imageFile, setImageFile] = useState(
         () => location.state?.imageFile ?? null
     )
-
     const [newIngredient, setNewIngredient] = useState('')
     const [preparationTime, setPreparationTime] = useState(
         () => location.state?.preparationTime ?? '30'
     )
-
     const [servings, setServings] = useState(
         () => location.state?.servings ?? 2
     )
     const [error, setError] = useState('')
     const [imageError, setImageError] = useState('')
     const [announcement, setAnnouncement] = useState('')
-    const [requestMessage, setRequestMessage] = useState('')
 
     const canSuggest =
-        ingredients.some((item) => item.name?.trim()) ||
-        Boolean(imageFile)
+        ingredients.some((item) => item.name?.trim()) || Boolean(imageFile)
 
     function updateIngredient(id, changes) {
         setIngredients((current) =>
@@ -200,9 +338,7 @@ export default function IngredientReview() {
                 item.id === id ? { ...item, ...changes } : item
             )
         )
-
         setError('')
-        setRequestMessage('')
     }
 
     function removeIngredient(id) {
@@ -211,9 +347,7 @@ export default function IngredientReview() {
         setIngredients((current) =>
             current.filter((item) => item.id !== id)
         )
-
         setError('')
-        setRequestMessage('')
         setAnnouncement(`تم حذف ${removed?.name || 'المكوّن'}`)
         nameInputRef.current?.focus()
     }
@@ -231,7 +365,7 @@ export default function IngredientReview() {
 
         const exists = ingredients.some(
             (item) =>
-                item.name.trim().toLocaleLowerCase() ===
+                (item.name || '').trim().toLocaleLowerCase() ===
                 name.toLocaleLowerCase()
         )
 
@@ -241,19 +375,20 @@ export default function IngredientReview() {
             return
         }
 
-        const item = {
-            id: nextIdRef.current++,
-            name,
-            expiringSoon: false,
-            expiryMode: '',
-            expiryDate: '',
-            expiryEstimateRecordedOn: '',
-        }
+        setIngredients((current) => [
+            ...current,
+            {
+                id: nextIdRef.current++,
+                name,
+                expiringSoon: false,
+                expiryMode: '',
+                expiryDate: '',
+                expiryEstimateRecordedOn: '',
+            },
+        ])
 
-        setIngredients((current) => [...current, item])
         setNewIngredient('')
         setError('')
-        setRequestMessage('')
         setAnnouncement(`تمت إضافة ${name}`)
         nameInputRef.current?.focus()
     }
@@ -264,13 +399,7 @@ export default function IngredientReview() {
 
         if (!file) return
 
-        const allowedTypes = [
-            'image/jpeg',
-            'image/png',
-            'image/webp',
-        ]
-
-        if (!allowedTypes.includes(file.type)) {
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
             setImageError('اختَر صورة بصيغة JPG أو PNG أو WEBP')
             return
         }
@@ -282,19 +411,16 @@ export default function IngredientReview() {
 
         setImageFile(file)
         setImageError('')
-        setRequestMessage('')
         setAnnouncement('تمت إضافة الصورة')
     }
 
     function removeImage() {
         setImageFile(null)
         setImageError('')
-        setRequestMessage('')
         setAnnouncement('تم حذف الصورة')
     }
 
     function handleSuggest() {
-        // BACKEND: Recipe generation is requested on the next screen through recipeApi.js; ensure ingredients, preparationTime, servings, user preferences, and any image-analysis result are available to that request.
         if (!canSuggest) return
 
         if (newIngredient.trim()) {
@@ -307,16 +433,16 @@ export default function IngredientReview() {
 
         if (unnamed) {
             setError('اكتب اسم المكوّن الفاضي أو احذفه')
-            document
-                .getElementById(`review-name-${unnamed.id}`)
-                ?.focus()
+            document.getElementById(`review-name-${unnamed.id}`)?.focus()
             return
         }
 
         setError('')
 
+        // BACKEND: recipeApi.js receives these values on the recipes screen.
         navigate('/recipes', {
             state: {
+                ...location.state,
                 ingredients,
                 imageFile,
                 preparationTime,
@@ -334,7 +460,12 @@ export default function IngredientReview() {
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
                     <Link
                         to="/app"
-                        state={{ ingredients, imageFile }}
+                        state={{
+                            ingredients,
+                            imageFile,
+                            preparationTime,
+                            servings,
+                        }}
                         aria-label="جود الرئيسية"
                     >
                         <img
@@ -345,7 +476,7 @@ export default function IngredientReview() {
                     </Link>
 
                     <details className="group relative">
-                        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full bg-jood-background px-4 py-2 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
+                        <summary className="jood-button flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full bg-jood-background px-4 py-2 text-sm font-medium marker:content-none [&::-webkit-details-marker]:hidden">
                             <UserRound size={19} aria-hidden="true" />
                             <span>حسابي</span>
                             <ChevronDown
@@ -366,14 +497,12 @@ export default function IngredientReview() {
                                 <UserRound size={18} aria-hidden="true" />
                                 بيانات حسابي
                             </Link>
+
                             <Link
                                 to="/preferences"
-                                className="flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-jood-lime"
+                                className="flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-jood-background"
                             >
-                                <SlidersHorizontal
-                                    size={18}
-                                    aria-hidden="true"
-                                />
+                                <SlidersHorizontal size={18} aria-hidden="true" />
                                 تفضيلاتي
                             </Link>
                         </nav>
@@ -382,7 +511,6 @@ export default function IngredientReview() {
             </header>
 
             <main className="jood-fixed-watermark relative isolate mx-3 my-3 flex-1 overflow-hidden rounded-3xl bg-jood-background px-3 py-6 sm:mx-5 sm:px-8 lg:py-12">
-
                 <div className="mx-auto w-full min-w-0 max-w-5xl">
                     <h1 className="stylistic-text text-3xl font-bold leading-relaxed sm:text-4xl">
                         خلّنا نراجع الموجود
@@ -417,24 +545,18 @@ export default function IngredientReview() {
 
                             <button
                                 type="button"
-                                onClick={() =>
-                                    imageInputRef.current?.click()
-                                }
-                                aria-label={
-                                    imageFile ? 'تغيير الصورة' : 'إضافة صورة'
-                                }
-                                title={
-                                    imageFile ? 'تغيير الصورة' : 'إضافة صورة'
-                                }
-                                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-jood-background transition-colors hover:bg-jood-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
+                                onClick={() => imageInputRef.current?.click()}
+                                aria-label={imageFile ? 'تغيير الصورة' : 'إضافة صورة'}
+                                title={imageFile ? 'تغيير الصورة' : 'إضافة صورة'}
+                                className={`${iconButton} bg-jood-background`}
                             >
                                 <Camera size={21} aria-hidden="true" />
                             </button>
                         </div>
 
                         <p className="mt-3 text-sm leading-7 text-jood-green/70">
-                            عدّل مكوناتك أو احذفها، وحدّد اللي قرب ينتهي
-                            عشان نعطيه أولوية
+                            عدّل مكوناتك أو احذفها، وأضف الصلاحية لو تعرفها
+                            عشان نعطي اللي قرب ينتهي أولوية
                         </p>
 
                         {imageFile && (
@@ -453,7 +575,7 @@ export default function IngredientReview() {
                                     type="button"
                                     onClick={removeImage}
                                     aria-label="حذف الصورة"
-                                    className="flex size-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-jood-green/10"
+                                    className={iconButton}
                                 >
                                     <X size={18} aria-hidden="true" />
                                 </button>
@@ -461,66 +583,59 @@ export default function IngredientReview() {
                         )}
 
                         {imageError && (
-                            <p
-                                role="alert"
-                                className="mt-3 text-sm text-red-700"
-                            >
+                            <p role="alert" className="mt-3 text-sm text-red-700">
                                 {imageError}
                             </p>
                         )}
 
                         {ingredients.length > 0 ? (
-                            <ul className="mt-4 grid min-w-0 grid-cols-1 items-start gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            <ul className="mt-5 flex min-w-0 flex-col gap-3">
                                 {ingredients.map((item) => (
                                     <li
                                         key={item.id}
-                                        className="min-w-0 rounded-2xl border border-jood-green/10 bg-jood-background p-3"
+                                        className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-jood-green/10 bg-jood-background p-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-5 sm:px-4"
                                     >
-                                        <div className="mb-2 flex items-center justify-between gap-3">
+                                        <div className="col-start-1 row-start-1 min-w-0">
                                             <label
                                                 htmlFor={`review-name-${item.id}`}
-                                                className="text-sm font-medium"
+                                                className="sr-only"
                                             >
                                                 اسم المكوّن
                                             </label>
 
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeIngredient(item.id)
+                                            <input
+                                                id={`review-name-${item.id}`}
+                                                type="text"
+                                                value={item.name || ''}
+                                                maxLength={60}
+                                                placeholder="اسم المكوّن"
+                                                onChange={(event) =>
+                                                    updateIngredient(item.id, {
+                                                        name: event.target.value,
+                                                    })
                                                 }
-                                                aria-label={`حذف ${item.name || 'المكوّن'}`}
-                                                className="flex size-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-jood-green/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
-                                            >
-                                                <X
-                                                    size={18}
-                                                    aria-hidden="true"
-                                                />
-                                            </button>
+                                                className={fieldClass}
+                                            />
                                         </div>
 
-                                        <input
-                                            id={`review-name-${item.id}`}
-                                            type="text"
-                                            value={item.name}
-                                            maxLength={60}
-                                            onChange={(event) =>
-                                                updateIngredient(item.id, {
-                                                    name: event.target.value,
-                                                })
-                                            }
-                                            className={fieldClass}
-                                        />
+                                        <div className="col-start-1 row-start-2 min-w-0 sm:col-start-2 sm:row-start-1 sm:max-w-[260px]">
+                                            <IngredientExpiry
+                                                ingredient={item}
+                                                onChange={(changes) =>
+                                                    updateIngredient(item.id, changes)
+                                                }
+                                            />
+                                        </div>
 
-                                        <IngredientExpiry
-                                            ingredient={item}
-                                            onChange={(changes) =>
-                                                updateIngredient(
-                                                    item.id,
-                                                    changes
-                                                )
-                                            }
-                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeIngredient(item.id)}
+                                            aria-label={`حذف ${item.name || 'المكوّن'}`}
+                                            title="حذف المكوّن"
+                                            className={`${iconButton} col-start-2 row-start-1 sm:col-start-3`}
+                                        >
+                                            <X size={19} aria-hidden="true" />
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
@@ -558,7 +673,7 @@ export default function IngredientReview() {
                                 <button
                                     type="submit"
                                     aria-label="إضافة المكوّن"
-                                    className="flex size-12 items-center justify-center rounded-xl bg-jood-green text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
+                                    className="jood-button flex size-12 items-center justify-center rounded-xl bg-jood-green text-white transition-colors hover:bg-jood-lime hover:text-jood-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green"
                                 >
                                     <Plus size={22} aria-hidden="true" />
                                 </button>
@@ -607,20 +722,14 @@ export default function IngredientReview() {
                                                 type="radio"
                                                 name="preparation-time"
                                                 value={option.value}
-                                                checked={
-                                                    preparationTime ===
-                                                    option.value
+                                                checked={preparationTime === option.value}
+                                                onChange={() =>
+                                                    setPreparationTime(option.value)
                                                 }
-                                                onChange={() => {
-                                                    setPreparationTime(
-                                                        option.value
-                                                    )
-                                                    setRequestMessage('')
-                                                }}
                                                 className="peer sr-only"
                                             />
 
-                                            <span className="flex min-h-12 items-center justify-center rounded-xl border border-jood-green/20 px-3 py-2 text-sm transition-colors peer-checked:border-jood-green peer-checked:bg-jood-lime peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-jood-green">
+                                            <span className="jood-button flex min-h-12 items-center justify-center rounded-xl border border-jood-green/20 px-3 py-2 text-sm transition-colors peer-checked:border-jood-green peer-checked:bg-jood-lime peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-jood-green">
                                                 {option.label}
                                             </span>
                                         </label>
@@ -649,14 +758,11 @@ export default function IngredientReview() {
                                 <button
                                     type="button"
                                     disabled={servings <= 1}
-                                    onClick={() => {
-                                        setServings((value) =>
-                                            Math.max(1, value - 1)
-                                        )
-                                        setRequestMessage('')
-                                    }}
+                                    onClick={() =>
+                                        setServings((value) => Math.max(1, value - 1))
+                                    }
                                     aria-label="تقليل عدد الحصص"
-                                    className="flex size-11 items-center justify-center rounded-full bg-white transition-colors enabled:hover:bg-jood-lime disabled:opacity-35"
+                                    className={`${iconButton} bg-white disabled:opacity-35`}
                                 >
                                     <Minus size={20} aria-hidden="true" />
                                 </button>
@@ -672,14 +778,11 @@ export default function IngredientReview() {
                                 <button
                                     type="button"
                                     disabled={servings >= 20}
-                                    onClick={() => {
-                                        setServings((value) =>
-                                            Math.min(20, value + 1)
-                                        )
-                                        setRequestMessage('')
-                                    }}
+                                    onClick={() =>
+                                        setServings((value) => Math.min(20, value + 1))
+                                    }
                                     aria-label="زيادة عدد الحصص"
-                                    className="flex size-11 items-center justify-center rounded-full bg-white transition-colors enabled:hover:bg-jood-lime disabled:opacity-35"
+                                    className={`${iconButton} bg-white disabled:opacity-35`}
                                 >
                                     <Plus size={20} aria-hidden="true" />
                                 </button>
@@ -692,20 +795,11 @@ export default function IngredientReview() {
                             type="button"
                             onClick={handleSuggest}
                             disabled={!canSuggest}
-                            className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-jood-green px-7 py-3 font-medium text-white transition-colors enabled:hover:bg-jood-lime enabled:hover:text-jood-green disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jood-green sm:w-auto"
+                            className={`${primaryButton} w-full sm:w-auto`}
                         >
                             اقترح لي وصفات
                         </button>
                     </div>
-
-                    {requestMessage && (
-                        <p
-                            role="status"
-                            className="mt-4 text-sm leading-7 text-jood-green/75"
-                        >
-                            {requestMessage}
-                        </p>
-                    )}
                 </div>
             </main>
 
