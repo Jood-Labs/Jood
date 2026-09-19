@@ -108,6 +108,7 @@ function IngredientExpiry({ ingredient, onChange }) {
 
     function saveExpiry(event) {
         event.preventDefault()
+        
 
         if (!mode) {
             setError('اختَر المدة أو حدّد التاريخ')
@@ -151,11 +152,6 @@ function IngredientExpiry({ ingredient, onChange }) {
             onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                     closeEditor()
-                }
-            }}
-            onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) {
-                    setIsOpen(false)
                 }
             }}
         >
@@ -436,7 +432,11 @@ setImageFile(file)
         const detectedIngredients = (response.ingredients || []).map(
     (item) => ({
         id: nextIdRef.current++,
+
         name: item.name,
+
+        name_ar: item.name_ar || item.name,
+
         confidence: item.confidence,
         detectedByAI: true,
         source: 'image',
@@ -691,7 +691,7 @@ setImageFile(file)
     id={`review-name-${item.id}`}
     type="text"
     dir="auto"
-    value={item.name || ''}
+    value={item.name_ar || item.name || ''}
     maxLength={60}
     placeholder="اسم المكوّن"
     onChange={(event) =>
