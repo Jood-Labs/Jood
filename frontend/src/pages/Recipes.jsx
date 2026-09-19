@@ -16,6 +16,71 @@ import {
 } from '../components/recipe/recipeStyles'
 import useBookmarks from '../hooks/useBookmarks'
 import { getRecipeSuggestions } from '../services/recipeApi'
+import pastaImg from "../assets/images/recipes/pasta.jpg";
+import riceImg from "../assets/images/recipes/rice.jpg";
+import chickenImg from "../assets/images/recipes/chicken.jpg";
+import saladImg from "../assets/images/recipes/salad.jpg";
+import sandwichImg from "../assets/images/recipes/sandwich.jpg";
+import soupImg from "../assets/images/recipes/soup.jpg";
+import pasta2Img from "../assets/images/recipes/pasta2.jpg";
+
+function isPastaRecipe(name = "") {
+    const recipeName = name.toLowerCase();
+
+    return (
+        recipeName.includes("مكرونة") ||
+        recipeName.includes("مكرونه") ||
+        recipeName.includes("باستا") ||
+        recipeName.includes("pasta")
+    );
+}
+
+function getRecipeImage(name = "", pastaIndex = 0) {
+    const recipeName = name.toLowerCase();
+
+    if (isPastaRecipe(recipeName)) {
+        return pastaIndex % 2 === 0 ? pastaImg : pasta2Img;
+    }
+
+    if (
+        recipeName.includes("رز") ||
+        recipeName.includes("أرز") ||
+        recipeName.includes("كبسة")
+    ) {
+        return riceImg;
+    }
+
+    if (
+        recipeName.includes("دجاج") ||
+        recipeName.includes("chicken")
+    ) {
+        return chickenImg;
+    }
+
+    if (
+        recipeName.includes("سلطة") ||
+        recipeName.includes("ساندوتش")
+    ) {
+        return saladImg;
+    }
+
+    if (
+        recipeName.includes("جبنة") ||
+        recipeName.includes("cheese") ||
+        recipeName.includes("توست")
+    ) {
+        return sandwichImg;
+    }
+    if (
+        recipeName.includes("شوربة") ||
+        recipeName.includes("شوربه") ||
+        recipeName.includes("soup")
+    ) {
+        return soupImg;
+    }
+
+    return null;
+}
 
 export default function Recipes() {
     const location = useLocation()
@@ -306,6 +371,15 @@ export default function Recipes() {
                         Array.isArray(recipe.priorityNames) &&
                         recipe.priorityNames.length > 0
 
+                    const pastaIndex = visible
+                        .slice(0, index)
+                        .filter((item) => isPastaRecipe(item.name)).length
+
+                    const recipeImage = getRecipeImage(
+                        recipe.name,
+                        pastaIndex
+                    )
+
                     return (
                         <article
                             key={recipe.id}
@@ -313,14 +387,24 @@ export default function Recipes() {
                             className={`jood-recipe-card recipe-enter flex min-w-0 flex-col overflow-hidden rounded-3xl bg-white ${priority ? 'ring-2 ring-jood-green/40' : ''
                                 }`}
                         >
-                            <div className="relative flex h-36 items-center justify-center bg-jood-lime/65">
-                                <div className="flex size-20 items-center justify-center rounded-full bg-white/65">
-                                    <ChefHat
-                                        size={40}
-                                        strokeWidth={1.5}
-                                        aria-hidden="true"
+                            <div className="relative h-40 overflow-hidden bg-jood-lime/65">
+                                {recipeImage ? (
+                                    <img
+                                        src={recipeImage}
+                                        alt={recipe.name}
+                                        className="h-full w-full object-cover"
                                     />
-                                </div>
+                                ) : (
+                                    <div className="flex h-full items-center justify-center">
+                                        <div className="flex size-20 items-center justify-center rounded-full bg-white/65">
+                                            <ChefHat
+                                                size={40}
+                                                strokeWidth={1.5}
+                                                aria-hidden="true"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <button
                                     type="button"
