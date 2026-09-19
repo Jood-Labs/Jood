@@ -356,11 +356,11 @@ def to_response(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     compares against, and the list is ordered most-confident first so the user
     reviews the certain items before the doubtful ones.
     """
-
     rows = []
 
     for item in items:
         name = (item.get("ingredient_en") or "").strip().lower()
+        name_ar = (item.get("ingredient_ar") or "").strip()
 
         if not name:
             continue
@@ -373,6 +373,7 @@ def to_response(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         rows.append(
             {
                 "name": name,
+                "name_ar": name_ar,
                 "confidence": round(min(max(confidence, 0.0), 1.0), 2),
             }
         )

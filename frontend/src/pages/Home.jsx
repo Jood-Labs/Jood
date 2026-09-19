@@ -371,6 +371,7 @@ const [ingredients, setIngredients] = useState([])
             detectedIngredients = (response.ingredients || []).map((item) => ({
     id: nextIdRef.current++,
     name: item.name,
+    name_ar: item.name_ar || item.name,
     confidence: item.confidence,
     detectedByAI: true,
     source: 'image',
