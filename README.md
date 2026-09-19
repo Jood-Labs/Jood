@@ -271,18 +271,52 @@ flowchart LR
 ### 04.2 · Recipe Generation
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#31572c', 'primaryTextColor':'#faf9f6', 'primaryBorderColor':'#edf49a', 'lineColor':'#31572c', 'textColor':'#31572c', 'fontSize':'12px'}}}%%
-flowchart LR
-    A["Confirmed ingredients<br/>+ priority/expiring items<br/>+ diet, servings, max time"] --> B["Prompt Construction"]
-    B --> C["DeepSeek<br/>generate 3 recipes"]
-    C --> D{"Validate: availability,<br/>diet, priority use,<br/>diversity, language"}
-    D -->|"fails, up to 7 attempts"| E["Retry with the<br/>specific failure"]
-    E --> C
-    D -->|"passes"| F["Ground against<br/>real ingredient list"]
-    F --> G["Recipes with<br/>you_have / you_need"]
+%%{init: {
+  'theme':'base',
+  'themeVariables': {
+    'primaryColor':'#31572C',
+    'primaryTextColor':'#FAF9F6',
+    'primaryBorderColor':'#EDF49A',
+    'lineColor':'#90A955',
+    'textColor':'#31572C',
+    'edgeLabelBackground':'#30363D',
+    'fontSize':'12px'
+  },
+  'themeCSS': '.edgeLabel p { background-color: #30363D !important; }'
+}}%%
 
-    classDef step fill:#e9f1e6,stroke:#31572c,color:#31572c;
+flowchart LR
+
+    A["Confirmed ingredients<br/>+ priority/expiring items<br/>+ diet, servings, max time"]
+
+    B["Prompt Construction"]
+
+    C["DeepSeek<br/>generate 3 recipes"]
+
+    D{"Validate: availability,<br/>diet, priority use,<br/>diversity, language"}
+
+    E["Retry with the<br/>specific failure"]
+
+    F["Ground against<br/>real ingredient list"]
+
+    G["Recipes with<br/>you_have / you_need"]
+
+    A --> B
+    B --> C
+    C --> D
+
+    D -->|"<span style='color:#F08C8C;font-weight:bold'>FAIL · up to 7 attempts</span>"| E
+    E --> C
+
+    D -->|"<span style='color:#90A955;font-weight:bold'>PASS</span>"| F
+
+    F --> G
+
+    classDef step fill:#E9F1E6,stroke:#31572C,stroke-width:1.5px,color:#31572C;
+
     class A,B,C,D,E,F,G step;
+
+    linkStyle default stroke:#90A955,stroke-width:1.5px;
 ```
 
 **Result**, on 27 functional test cases covering recipe constraints, user preferences, output consistency, and robustness:
