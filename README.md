@@ -1,3 +1,4 @@
+<br>
 <div align="center">
 
 <img src="assets/logo-slogan.svg" alt="جُود — الجود من الموجود" width="362" />
@@ -42,7 +43,7 @@ Jood addresses this gap by reducing ingredient identification, recipe selection,
     'primaryColor':'#31572C',
     'primaryTextColor':'#FAF9F6',
     'primaryBorderColor':'#EDF49A',
-    'lineColor':'#31572C',
+    'lineColor':'#90A955',
     'textColor':'#31572C',
     'fontSize':'12px'
   }
@@ -70,11 +71,15 @@ flowchart LR
     A --> B
     E --> G
 
-    classDef stage fill:#E9F1E6,stroke:#31572C,stroke-width:1.5px,color:#31572C;
+    classDef stage fill:#E9F1E6,stroke:#90A955,stroke-width:1.5px,color:#31572C;
     classDef edge fill:#FAF9F6,stroke:#EDF49A,stroke-width:2px,color:#31572C;
 
     class B,C,D,E stage;
     class A,G edge;
+
+    style Input fill:#30363D,stroke:#90A955,stroke-width:1.5px,color:#FFFFFF
+    style Jood fill:#30363D,stroke:#90A955,stroke-width:1.5px,color:#FFFFFF
+    style Output fill:#30363D,stroke:#90A955,stroke-width:1.5px,color:#FFFFFF
 ```
 
 <div align="center">
@@ -178,19 +183,47 @@ flowchart LR
 ### 04.1 · Ingredient Detection
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#31572c', 'primaryTextColor':'#faf9f6', 'primaryBorderColor':'#edf49a', 'lineColor':'#31572c', 'textColor':'#31572c', 'fontSize':'12px'}}}%%
+%%{init: {
+  'theme':'base',
+  'themeVariables': {
+    'primaryColor':'#31572C',
+    'primaryTextColor':'#FAF9F6',
+    'primaryBorderColor':'#EDF49A',
+    'lineColor':'#90A955',
+    'textColor':'#31572C',
+    'edgeLabelBackground':'#30363D',
+    'fontSize':'12px'
+  }
+}}%%
+
 flowchart LR
+
     A["Kitchen photo"] --> B["First pass<br/>DeepSeek VLM"]
+
     B --> C{"7 or more<br/>items returned?"}
+
     C -->|"no"| F["Semantic merge"]
+
     C -->|"yes, crowded"| D["Split into 2×2<br/>overlapping tiles"]
+
     D --> E["Parallel VLM call<br/>per tile"]
+
     E --> F
+
     F --> G["Ingredient list<br/>name + confidence"]
+
     G --> H["User confirms<br/>or corrects"]
 
-    classDef step fill:#e9f1e6,stroke:#31572c,color:#31572c;
+    classDef step fill:#E9F1E6,stroke:#31572C,stroke-width:1.5px,color:#31572C;
+
     class A,B,C,D,E,F,G,H step;
+
+    linkStyle default stroke:#90A955,stroke-width:1.5px;
+
+    classDef default color:#31572C;
+
+    %% White text for edge labels
+    %% Mermaid supports edge label text styling through themeCSS,B,C,D,E,F,G,H step;
 ```
 <br>
 
