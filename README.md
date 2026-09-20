@@ -29,6 +29,16 @@ In Saudi Arabia, food loss and waste stood at **27.9% in 2025**. A nationwide st
 
 Jood addresses this gap by reducing ingredient identification, recipe selection, and shopping list assembly to a single automated pipeline, initiated from one photograph of the ingredients on hand.
 
+<h3 align="center"> Jood in Action</h3>
+
+<div align="center">
+
+https://github.com/user-attachments/assets/d1254507-f5da-4006-92dd-d5b93a4ea599
+
+</div>
+
+<br/>
+
 - **Automated ingredient recognition.** A photograph of the fridge, shelf, or counter is processed to identify the ingredients present, which the user reviews and confirms prior to further use.
 - **Preference-aware recipe generation.** Recipes are generated and validated against the confirmed ingredient set, stated dietary restrictions, and maximum preparation time, rather than retrieved from a static recipe database.
 - **Waste-oriented prioritization.** Ingredients approaching expiry may be flagged, directing recipe generation to make use of them before spoilage occurs.
