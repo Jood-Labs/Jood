@@ -520,8 +520,8 @@ npm run dev
   </a>
   <br /><br />
   <a href="https://github.com/RanaAlsaggaf">
-    <img src="https://img.shields.io/badge/Rana_Alsaggaf-UI%2FUX_Designer-31572C?style=flat-square&labelColor=243D20" alt="Rana Alsaggaf — UI/UX Designer" />
-  </a>
+  <img src="https://img.shields.io/badge/Rana_Alsaggaf-UI%2FUX_Designer_%26_Developer-31572C?style=flat-square&labelColor=243D20" alt="Rana Alsaggaf — UI/UX Designer & Developer" />
+</a>
   <br /><br />
   <a href="https://github.com/haifMohammed">
     <img src="https://img.shields.io/badge/Haif_Albarakati-Full--Stack_Developer-31572C?style=flat-square&labelColor=243D20" alt="Haif Albarakati — Full-Stack Developer" />
