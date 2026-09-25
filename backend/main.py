@@ -28,6 +28,7 @@ app.add_middleware(
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://jood-32yt1tbc5-haifs-projects.vercel.app",
+    "https://jood-ai.vercel.app",
 ],
     allow_credentials=True,
     allow_methods=["*"],
