@@ -1,7 +1,7 @@
 <br>
 <div align="center">
 
-<img src="assets/logo-slogan.svg" alt="جُود — الجود من الموجود" width="362" />
+<img src="assets/logo-slogan.svg" alt="جُود - الجود من الموجود" width="362" />
 
 <br />
 
@@ -10,8 +10,9 @@ An AI-powered platform that turns available ingredients into recipes that fit yo
 
 <br />
 
-![Recipe Station](https://img.shields.io/badge/AgentX-Recipe_Station_Challenge-4F772D?style=flat-square)
-![In Development](https://img.shields.io/badge/Status-Under_Development-4F772D?style=flat-square)
+
+![Production Ready v1.0.0](https://img.shields.io/badge/Production_Ready-v1.0.0-4F772D?style=flat-square)
+[![Website](https://img.shields.io/badge/Website-Visit_Jood-4F772D?style=flat-square&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii04IC04IDE3OCAxNTYiPjxwYXRoIGQ9Ik00Mi45IDEwMy42Yy0uNSA4LjEtLjQgMTMgMCAyMiAzMC4zIDkuNyA0NyAxMC4zIDc2LjUgMEMxMTcuOSAzNC45IDYyLjgtMi4zIDI4LjQgNy42LTUuOSAxNy40IDIuNyA2NC4yIDMwLjQgNzkuMWMxOS43IDEyLjMgMzYuOSAxMi42IDcwIDEwLjVNOTcuNCAxNC4xYzQ2LjctMjIuMSA4My44IDIzLjQgMzQuNSA2Ni41IiBmaWxsPSJub25lIiBzdHJva2U9IiNFREY0OUEiIHN0cm9rZS13aWR0aD0iMTQiLz48L3N2Zz4%3D)](https://jood-ai.vercel.app/)
 
 <br />
 
@@ -107,85 +108,10 @@ flowchart LR
 <p align="center">
   From identifying what you have to deciding what to cook, Jood brings your ingredients, preferences, and shopping needs into one experience.
 </p>
-
 <br/>
-
-<div align="center">
-
-<table width="100%">
-
-  <tr>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/languages.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Arabic-First Experience
-      </h3>
-      RTL layouts, Arabic-generated recipes, and familiar ingredient quantities for a natural cooking experience.
-    </td>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/camera.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Ingredient Review
-      </h3>
-      Review detected ingredients, correct mistakes, and add or remove items before generating recipes.
-    </td>
-  </tr>
-
-  <tr>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/star.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Use-First Priorities
-      </h3>
-      Prioritize ingredients you want to use first, helping make the most of what is already available.
-    </td>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/sliders-horizontal.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Personalized Recipes
-      </h3>
-      Generate recipes tailored to dietary needs, allergies, dislikes, preferred cuisines, servings, and preparation time.
-    </td>
-  </tr>
-
-  <tr>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/chef-hat.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Recipe Variety
-      </h3>
-      Explore three recipe suggestions with checks for repetitive combinations, offering more ways to use your ingredients.
-    </td>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/shopping-cart.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Missing Ingredient Tracking
-      </h3>
-      Clearly distinguish ingredients you already have, common pantry staples, and missing items needed to complete a recipe.
-    </td>
-  </tr>
-
-  <tr>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/bookmark.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Saved Recipes & Shopping List
-      </h3>
-      Save recipes for later and collect missing ingredients in one shopping list.
-    </td>
-    <td width="50%" valign="top">
-      <h3>
-        <img src="https://api.iconify.design/lucide/settings.svg?color=%2390A955" width="22" height="22" alt=""/>
-        &nbsp; Account & Preferences
-      </h3>
-      Manage your profile and food preferences for a more consistent experience across recipe requests.
-    </td>
-  </tr>
-
-</table>
-
-</div>
-
+<p align="center">
+  <img src="assets/features.svg" alt="Jood features: Arabic-first experience, ingredient review, use-first priorities, personalized recipes, recipe variety, missing ingredient tracking, saved recipes and shopping list, account and preferences" width="100%" />
+</p>
 <br>
 
 ## 04 · AI Pipeline
@@ -379,7 +305,6 @@ The recipe-generation service was validated across four main areas:
 ## 05 · Tech stack
 
 <div align="center">
-
 <table>
   <tr>
     <th>Layer</th>
@@ -405,9 +330,14 @@ The recipe-generation service was validated across four main areas:
     <td><b>Image Handling</b></td>
     <td>Pillow, pillow-heif (HEIC support for iPhone photo uploads)</td>
   </tr>
+  <tr>
+    <td><b>Deployment</b></td>
+    <td>Vercel (frontend), Render (backend)</td>
+  </tr>
 </table>
-
 </div>
+
+<br>
 
 
 ## 06 · System
@@ -415,34 +345,34 @@ The recipe-generation service was validated across four main areas:
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'background':'#4c4c4c', 'primaryColor':'#123634', 'primaryTextColor':'#faf9f6', 'primaryBorderColor':'#edf49a', 'lineColor':'#faf9f6', 'textColor':'#faf9f6', 'fontSize':'12px', 'edgeLabelBackground':'#4c4c4c'}}}%%
 flowchart TD
-    subgraph Client["Frontend: React"]
+    subgraph Client["Frontend: React on Vercel"]
         A1["Auth / Landing"] --> A2["Ingredient review<br/>photo or manual"]
         A2 --> A3["Recipes, cart,<br/>account"]
     end
-
-    subgraph API["Backend: FastAPI"]
+ 
+    subgraph API["Backend: FastAPI on Render"]
         B1["/ingredients/detect"]
         B2["/recipes/generate"]
         B3["/shopping-list/*"]
         B4["/auth, /preferences,<br/>/profile, /bookmarks"]
     end
-
+ 
     subgraph External["External services"]
         C1["DeepSeek<br/>vision + language"]
         C2[("Supabase<br/>auth, profiles, recipes,<br/>products, aliases")]
     end
-
+ 
     A2 -->|"multipart photo"| B1
     A3 -->|"ingredients + prefs"| B2
     A3 -->|"missing items"| B3
     A1 -->|"credentials"| B4
-
+ 
     B1 --> C1
     B2 --> C1
     B2 --> C2
     B3 --> C2
     B4 --> C2
-
+ 
     style Client fill:#2a2a2a,stroke:#edf49a,color:#faf9f6
     style API fill:#2a2a2a,stroke:#31572c,color:#faf9f6
     style External fill:#2a2a2a,stroke:#006837,color:#faf9f6
@@ -536,7 +466,7 @@ npm run dev
 
 <br />
 
-**Built by Jood Team** for the HungerStation AgentX challenge
+**Built by Jood Team**
 
 <p dir="rtl">« الجُــود من الموجـود »</p>
 
