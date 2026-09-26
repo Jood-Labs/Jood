@@ -109,8 +109,10 @@ flowchart LR
   From identifying what you have to deciding what to cook, Jood brings your ingredients, preferences, and shopping needs into one experience.
 </p>
 <br/>
+
 <p align="center">
-  <img src="assets/features.svg" alt="Jood features: Arabic-first experience, ingredient review, use-first priorities, personalized recipes, recipe variety, missing ingredient tracking, saved recipes and shopping list, account and preferences" width="100%" />
+  <img src="assets/features-light.svg#gh-light-mode-only" alt="Jood features: Arabic-first experience, ingredient review, use-first priorities, personalized recipes, recipe variety, missing ingredient tracking, saved recipes and shopping list, account and preferences" width="100%" />
+  <img src="assets/features-dark.svg#gh-dark-mode-only" alt="Jood features: Arabic-first experience, ingredient review, use-first priorities, personalized recipes, recipe variety, missing ingredient tracking, saved recipes and shopping list, account and preferences" width="100%" />
 </p>
 <br>
 
