@@ -302,6 +302,8 @@ The recipe-generation service was validated across four main areas:
 - **Generation Quality Checks:** Recipe diversity and reasonable use of available ingredients.
 - **Robustness & Safety:** Invalid inputs, oversized inputs, validation failures, and prompt-injection resistance.
 
+>Full test cases and validation details: [`docs/recipe-test-cases.md`](docs/recipe-test-cases.md).
+
 <br>
 
 ## 05 · Tech stack
@@ -385,26 +387,35 @@ flowchart TD
 ```
 Jood/
 │
-├── assets/                 Logos used in this README
+├── assets/                 Logos and feature illustrations used in this README
 │
 ├── backend/                FastAPI service
+│   ├── dependencies/          Auth dependency for protected routes
 │   ├── models/                Pydantic request/response schemas
 │   ├── routes/                auth, ingredients, recipes, shopping_list, ...
 │   ├── services/              cv_service, llm_service, recipe_matching, store_service
+│   ├── main.py                App entry point, CORS, router registration
 │   └── requirements.txt       Pinned Python dependencies
 │
 ├── detection_benchmark/    Standalone evaluation of the detection pipeline
 │   └── README.md              Benchmark methodology and results
 │
-├── frontend/                React + Vite single-page app
+├── docs/                   Project documentation
+│   └── recipe-test-cases.md   27 validation tests for recipe generation
+│
+├── frontend/               React + Vite single-page app
+│   ├── public/                Favicons, app icons, link preview image
 │   ├── src/
 │   │   ├── pages/                Landing, auth, Home, IngredientReview, Recipes, Cart, ...
 │   │   └── services/             Fetch wrappers per backend route group
-│   ├── .gitignore              Frontend-specific ignore rules
-│   └── README.md               Frontend setup notes
+│   ├── .gitignore             Frontend-specific ignore rules
+│   └── README.md              Frontend setup and API reference
 │
-├── .gitignore               Root-level ignore rules
-└── README.md                This file
+├── scripts/                One-off data scripts
+│   └── fill_product_images.py  Fills product image URLs in Supabase
+│
+├── .gitignore              Root-level ignore rules
+└── README.md               This file
 ```
 
 ## 08 · Quick start
